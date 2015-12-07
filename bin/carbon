@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import codecs
+import json
+import os
+import sys
+from carbon import Console, Core
+
+base_path = os.path.abspath(os.getcwd())
+
+def __p(path):
+    return os.path.join(base_path, path)
+
+def main():
+    if base_path not in sys.path:
+        sys.path.append(base_path)
+
+    console_name = __package__ or sys.argv[0]
+    config_path  = os.getenv('CARBON_CONF') or __p('carbon.json')
+
+    service_config_paths = []
+
+    with codecs.open(config_path, 'r') as f:
+        pre_config = json.load(f)
+
+        service_config_paths.extend([
+            __p(service_config_path)
+            for service_config_path in pre_config['services']
+        ])
+
+    console = Console(
+        console_name,
+        config_path,
+        service_config_paths
+    )
+
+    console.activate()
+
+if __name__ == '__main__':
+    main()
