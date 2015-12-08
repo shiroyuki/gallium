@@ -1,0 +1,6 @@
+{
+    "use_imagination": true,
+    "auto_import_paths": [
+        "app/commands"
+    ]
+}

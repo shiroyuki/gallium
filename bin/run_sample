@@ -1,0 +1,2 @@
+#!/bin/bash
+CARBON_CONF=sample/carbon.json bin/carbon

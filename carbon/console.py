@@ -16,7 +16,8 @@ from imagination.locator import Locator
 
 from tori.common import get_logger
 
-import .core import Core
+from .core import Core
+from .interface import ICommand
 
 class Console(object):
     def __init__(self, name, config_path=None, service_config_paths=[]):
@@ -35,15 +36,22 @@ class Console(object):
         self.container.load(*service_config_paths)
 
     def activate(self):
+        sequence = [
+            ('use_imagination',   self._use_imagination),
+            ('auto_import_paths', self._auto_import_paths),
+        ]
+
+        for key, action in sequence:
+            if key in self.config and self.config[key]:
+                action()
+
+    def _use_imagination(self):
+        has_interface_containers = False
+
         main_parser = argparse.ArgumentParser(self.name)
         subparsers  = main_parser.add_subparsers(help='sub-commands')
 
-        for identifier in self.container.all():
-            service = self.container.get(identifier)
-
-            if not isinstance(service, ICommand):
-                continue
-
+        for service in self._get_interface_containers():
             documentation  = type(service).__doc__
             command_parser = subparsers.add_parser(identifier, help=documentation)
 
@@ -51,8 +59,28 @@ class Console(object):
 
             command_parser.set_defaults(func=service.execute)
 
+            has_interface_containers = True
+
+        if not has_interface_containers:
+            print('No commands available')
+            return
+
         args = main_parser.parse_args()
         args.func(args)
+
+    def _auto_import_paths(self):
+        mod = __import__()
+
+    def _get_interface_containers(self):
+        identifiers = self.container.all()
+
+        for identifier in identifiers:
+            service = self.container.get(identifier)
+
+            if not isinstance(service, ICommand):
+                continue
+
+            yield service
 
     def _prepare_db_connections(self):
         db_config       = self.config['db']

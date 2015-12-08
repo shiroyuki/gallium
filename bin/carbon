@@ -23,10 +23,11 @@ def main():
     with codecs.open(config_path, 'r') as f:
         pre_config = json.load(f)
 
-        service_config_paths.extend([
-            __p(service_config_path)
-            for service_config_path in pre_config['services']
-        ])
+        if 'services' in pre_config:
+            service_config_paths.extend([
+                __p(service_config_path)
+                for service_config_path in pre_config['services']
+            ])
 
     console = Console(
         console_name,
