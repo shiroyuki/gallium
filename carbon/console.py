@@ -5,7 +5,10 @@
 
 import argparse
 from contextlib import contextmanager
+import importlib
 import json
+import re
+import types
 
 from imagination.helper.assembler import Assembler
 from imagination.helper.data      import Transformer
@@ -37,39 +40,118 @@ class Console(object):
 
     def activate(self):
         sequence = [
-            ('use_imagination',   self._use_imagination),
-            ('auto_import_paths', self._auto_import_paths),
+            ('services', self._use_imagination),
+            ('imports',  self._import_commands),
         ]
-
-        for key, action in sequence:
-            if key in self.config and self.config[key]:
-                action()
-
-    def _use_imagination(self):
-        has_interface_containers = False
 
         main_parser = argparse.ArgumentParser(self.name)
         subparsers  = main_parser.add_subparsers(help='sub-commands')
 
-        for service in self._get_interface_containers():
-            documentation  = type(service).__doc__
-            command_parser = subparsers.add_parser(identifier, help=documentation)
+        services = {}
 
-            service.define(command_parser)
+        for key, action in sequence:
+            if key in self.config and self.config[key]:
+                services.update(
+                    action(
+                        subparsers,
+                        self.config[key]
+                    )
+                )
 
-            command_parser.set_defaults(func=service.execute)
-
-            has_interface_containers = True
-
-        if not has_interface_containers:
+        if not services:
             print('No commands available')
             return
 
         args = main_parser.parse_args()
-        args.func(args)
 
-    def _auto_import_paths(self):
-        mod = __import__()
+        try:
+            args.func(args)
+        except AttributeError as e:
+            main_parser.print_help()
+
+            return
+
+    def _use_imagination(self, subparsers, enabled):
+        services = {}
+
+        for identifier, service in self._get_interface_containers():
+            self._register_command(
+                subparsers,
+                identifier,
+                type(service),
+                service
+            )
+
+            services[identifier] = service
+
+        return services
+
+    def _import_commands(self, subparsers, module_paths):
+        classes  = []
+        services = {}
+
+        for module_path in module_paths:
+            try:
+                module = importlib.import_module(module_path)
+
+                classes.extend(self._retrieve_command_classes(module))
+            except ImportError as e:
+                parts = re.split('\.', module_path)
+
+                alternative_path = '.'.join(parts[:-1])
+                class_name       = parts[-1]
+
+                if not alternative_path:
+                    raise RuntimeError('Unable to import {}'.format(module_path))
+
+                module = importlib.import_module(alternative_path)
+                cls    = self._get_command_class(module, class_name)
+
+                classes.append(cls)
+
+        for CommandClass in classes:
+            sub_cli    = CommandClass()
+            identifier = sub_cli.identifier()
+
+            self._register_command(
+                subparsers,
+                identifier,
+                CommandClass,
+                sub_cli
+            )
+
+            services[identifier] = sub_cli
+
+        return services
+
+    def _retrieve_command_classes(self, module):
+        classes = []
+
+        for property_name in dir(module):
+            if '_' in property_name[0]:
+                continue
+
+            ClassType = self._get_command_class(module, property_name)
+
+            if ClassType == ICommand:
+                continue
+
+            if not issubclass(ClassType, ICommand):
+                continue
+
+            classes.append(ClassType)
+
+        return classes
+
+    def _register_command(self, subparsers, identifier, cls, instance):
+        documentation  = cls.__doc__
+        command_parser = subparsers.add_parser(identifier, help=documentation)
+
+        instance.define(command_parser)
+        command_parser.set_defaults(func=instance.execute)
+
+    def _get_command_class(self, module, property_name):
+        return eval('module.{}'.format(property_name))
 
     def _get_interface_containers(self):
         identifiers = self.container.all()
@@ -80,7 +162,7 @@ class Console(object):
             if not isinstance(service, ICommand):
                 continue
 
-            yield service
+            yield identifier, service
 
     def _prepare_db_connections(self):
         db_config       = self.config['db']

@@ -1,2 +1,4 @@
 #!/bin/bash
-CARBON_CONF=sample/carbon.json bin/carbon
+BASE_PATH="$(dirname `pwd`/$0)/.."
+CARBON_CONF=$BASE_PATH/sample/carbon.json \
+    bin/carbon

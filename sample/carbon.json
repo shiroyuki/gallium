@@ -1,6 +1,10 @@
 {
-    "use_imagination": true,
-    "auto_import_paths": [
-        "app/commands"
+    "paths": [
+        "sample"
+    ],
+    "services": [],
+    "imports": [
+        "app.allinone_commands",
+        "app.Default"
     ]
 }
