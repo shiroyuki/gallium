@@ -14,24 +14,16 @@ from imagination.entity  import Entity
 from imagination.loader  import Loader
 from imagination.locator import Locator
 
-from tori.common import get_logger
-
 class Core(object):
     """ The Core of the Framework
     """
     def __init__(self, locator=None):
-        self.logger      = get_logger('{}.{}'.format(__name__, self.__class__.__name__))
         self.locator     = locator or Locator()
         self.transformer = Transformer(self.locator)
         self.assembler   = Assembler(self.transformer)
 
-        self.default_services = [
-            ('finder',   'tori.common.Finder',                     [], {}),
-            ('renderer', 'tori.template.service.RenderingService', [], {}),
-            ('db',       'passerine.db.manager.ManagerFactory',    [], {})
-        ]
-
-        self.cache_map = None
+        self.default_services = []
+        self.cache_map        = None
 
         self._register_default_services()
 

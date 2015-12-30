@@ -6,6 +6,7 @@
 import argparse
 from contextlib import contextmanager
 import importlib
+import inspect
 import json
 import re
 import types
@@ -16,8 +17,6 @@ from imagination.entity  import CallbackProxy
 from imagination.entity  import Entity
 from imagination.loader  import Loader
 from imagination.locator import Locator
-
-from tori.common import get_logger
 
 from .core import Core
 from .interface import ICommand
@@ -134,6 +133,9 @@ class Console(object):
             ClassType = self._get_command_class(module, property_name)
 
             if ClassType == ICommand:
+                continue
+
+            if not inspect.isclass(ClassType):
                 continue
 
             if not issubclass(ClassType, ICommand):
