@@ -1,0 +1,13 @@
+language: python
+python:
+  - "3.5"
+  - "3.4"
+  - "3.3"
+  - "2.7"
+services:
+  - mongodb
+  - redis
+install:
+  - "pip install --ignore-installed --upgrade --force-reinstall -r requirements.txt"
+  - "pip install --ignore-installed --upgrade --force-reinstall passerine"
+script: "python setup.py install && bin/run_sample"
