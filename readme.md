@@ -11,6 +11,8 @@ imported and defined in `cli.json` from the current working directory.
 To override the default path of the configuration file, just run as
 `GALLIUM_CONF=/path/to/config/anyname.json gallium ...`.
 
+Please remember that when you are in doubt, use the classic `-h` or `--help` to find out more.
+
 ## Configuration
 
 Here is the desired syntax.
