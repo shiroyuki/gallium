@@ -1,19 +1,15 @@
-# Concepts
+# Gallium - A Micro CLI Framework for Python
 
-(Gallium is initially called "Carbon".)
-
-## Design
-
-**Carbon Framework** is designed to eliminate the need of setting up bootstrap
+**Gallium Framework** is designed to eliminate the need of setting up bootstrap
 and allow fast-pace CLI development where it only relies on built-in libraries
 such as `ArgumentParser` to let the developers define the argument in the way
 commonly known to any Python developers without asking them to learn new things.
 
-So, the user can use run `carbon <sub-command> [...]` where the subcommands are
-imported and defined in `carbon.json` from the current working directory.
+So, the user can use run `gallium <sub-command> [...]` where the subcommands are
+imported and defined in `cli.json` from the current working directory.
 
 To override the default path of the configuration file, just run as
-`CARBON_CONF=/path/to/config/anyname.json carbon ...`.
+`GALLIUM_CONF=/path/to/config/anyname.json gallium ...`.
 
 ## Configuration
 
@@ -53,17 +49,17 @@ only requires the pure-old-Python class. For example, here is a basic command.
 
 ```python
 # imaginary module name: sampleapp.cli
-from carbon.interface import ICommand
+from gallium.interface import ICommand
 
 class HelloWorld(ICommand):
     def identifier(self, args):
-        return 'com.shiroyuki.carbon.hw'
+        return 'com.shiroyuki.gallium.hw'
 
     def execute(self, args):
         print('Howdy?')
 ```
 
-Then, you can call this command by executing `carbon com.shiroyuki.carbon.hw`
+Then, you can call this command by executing `gallium com.shiroyuki.gallium.hw`
 
 ## Incorporating with Imagination Framework
 
@@ -76,4 +72,4 @@ Simply define an `ICommand` class as an entity, e.g.,
 </imagination>
 ```
 
-Then, you can call this command by executing `carbon apple`.
+Then, you can call this command by executing `gallium apple`.
