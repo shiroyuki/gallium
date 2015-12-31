@@ -1,9 +1,9 @@
 #!/bin/bash
 BASE_PATH="$(dirname `pwd`/$0)/.."
-CARBON_CONF=$BASE_PATH/sample/cli.json
+GALLIUM_CONF=$BASE_PATH/sample/cli.json
 
 echo "-----"
-CARBON_CONF=$CARBON_CONF bin/gallium
+GALLIUM_CONF=$GALLIUM_CONF bin/gallium
 echo "-----"
-CARBON_CONF=$CARBON_CONF bin/gallium sample.file_lister sample
+GALLIUM_CONF=$GALLIUM_CONF bin/gallium sample.file_lister sample
 echo "-----"

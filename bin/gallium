@@ -5,9 +5,9 @@ import json
 import os
 import sys
 
-from carbon import Console, Core
-from carbon.loader.basic       import Loader as BasicLoader
-from carbon.loader.imagination import Loader as ImaginationLoader
+from gallium import Console, Core
+from gallium.loader.basic       import Loader as BasicLoader
+from gallium.loader.imagination import Loader as ImaginationLoader
 
 base_path = os.path.abspath(os.getcwd())
 
@@ -19,7 +19,7 @@ def main():
         sys.path.append(base_path)
 
     console_name = __package__ or sys.argv[0]
-    config_path  = os.getenv('CARBON_CONF') or __p('carbon.json')
+    config_path  = os.getenv('GALLIUM_CONF') or __p('cli.json')
 
     service_config_paths = []
 

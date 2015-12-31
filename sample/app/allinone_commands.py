@@ -1,6 +1,6 @@
 import os
 
-from carbon.interface import ICommand
+from gallium.interface import ICommand
 
 class Dummy(ICommand):
     def identifier(self):

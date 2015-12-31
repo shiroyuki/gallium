@@ -1,4 +1,4 @@
-from carbon.interface import ICommand
+from gallium.interface import ICommand
 
 class Default(ICommand):
     def identifier(self):
