@@ -5,7 +5,7 @@ except:
 
 setup(
     name         = 'gallium',
-    version      = '0.1.2',
+    version      = '0.1.3',
     description  = 'A micro CLI development framework',
     license      = 'MIT',
     author       = 'Juti Noppornpitak',
