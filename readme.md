@@ -54,8 +54,11 @@ only requires the pure-old-Python class. For example, here is a basic command.
 from gallium.interface import ICommand
 
 class HelloWorld(ICommand):
-    def identifier(self, args):
+    def identifier(self):
         return 'com.shiroyuki.gallium.hw'
+
+    def define(self, parser):
+        pass
 
     def execute(self, args):
         print('Howdy?')
