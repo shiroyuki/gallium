@@ -10,6 +10,8 @@ import sys
 from .interface import ICommand
 
 class Console(object):
+    CONST_CONF_KEY_CMD_SETTINGS = 'settings'
+
     def __init__(self, name, core, config_path=None, loaders=[]):
         self.name   = name
         self.core   = core
@@ -36,6 +38,13 @@ class Console(object):
             if key in self.config and self.config[key]:
                 for identifier, kind, command in loader.all(self.config[key]):
                     self._register_command(subparsers, identifier, kind, command)
+
+                    command.set_core(self.core)
+                    command.set_settings(
+                        self.config[self.CONST_CONF_KEY_CMD_SETTINGS]
+                        if self.CONST_CONF_KEY_CMD_SETTINGS in self.config
+                        else {}
+                    )
 
                     commands[identifier] = command
 

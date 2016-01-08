@@ -7,6 +7,20 @@ Carbon Interfaces
 This is similar to controllers.
 """
 class ICommand(object):
+    @property
+    def settings(self):
+        return self.__settings
+
+    @property
+    def core(self):
+        return self.__core
+
+    def set_settings(self, settings):
+        self.__settings = settings
+
+    def set_core(self, core):
+        self.__core = core
+
     def identifier(self):
         """ Define the identifier of the command.
 

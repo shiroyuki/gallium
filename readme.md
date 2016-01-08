@@ -34,7 +34,10 @@ Here is the desired syntax.
 
             This is the basic setup.
         */
-    ]
+    ],
+    "settings": {
+        /* optional, shared settings across all commands. */
+    }
 }
 ```
 

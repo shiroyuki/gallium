@@ -6,6 +6,9 @@ class Dummy(ICommand):
     def identifier(self):
         return 'sample.dummy'
 
+    def define(self, parser):
+        pass
+
     def execute(self, args):
         print(self.__class__.__name__)
 
