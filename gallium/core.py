@@ -25,7 +25,7 @@ class Core(object):
         self.assembler   = Assembler(self.transformer)
 
         self.default_services = [
-            ('db', 'passerine.db.manager.ManagerFactory', [], {}),
+            #('db', 'passerine.db.manager.ManagerFactory', [], {}),
         ]
 
         self.cache_map = None

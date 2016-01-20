@@ -57,10 +57,8 @@ class Console(object):
 
         try:
             args.func(args)
-        except AttributeError as e:
-            main_parser.print_help()
-
-            return
+        except KeyboardInterrupt as e:
+            sys.exit(15)
 
     def _register_command(self, subparsers, identifier, cls, instance):
         documentation  = cls.__doc__
