@@ -1,7 +1,6 @@
 package:
-	@# For development only
-	@python setup.py sdist
+	@python3 setup.py sdist
 
+# Not using bdist_wheel due to permission issue.
 release:
-	@#python setup.py sdist upload # legacy
-	@python setup.py sdist bdist_wheel upload
+	@python3 setup.py sdist upload
