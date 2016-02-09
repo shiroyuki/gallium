@@ -5,7 +5,7 @@ except:
 
 setup(
     name         = 'gallium',
-    version      = '0.1.6',
+    version      = '0.1.8',
     description  = 'A micro CLI development framework',
     license      = 'MIT',
     author       = 'Juti Noppornpitak',
@@ -25,6 +25,6 @@ setup(
         'Programming Language :: Python :: 3',
         'Topic :: Software Development :: Libraries'
     ],
-    scripts          = ['bin/gallium'],
+    scripts          = ['bin/gallium', 'bin/g2', 'bin/g3'],
     install_requires = ['imagination', 'kotoba']
 )
