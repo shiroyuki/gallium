@@ -12,10 +12,10 @@ from .interface import ICommand
 class Console(object):
     CONST_CONF_KEY_CMD_SETTINGS = 'settings'
 
-    def __init__(self, name, core, config_path=None, loaders=[]):
+    def __init__(self, name, core, config={}, config_path=None, loaders=[]):
         self.name   = name
         self.core   = core
-        self.config = {}
+        self.config = config
 
         if config_path:
             with open(config_path) as f:
@@ -54,6 +54,11 @@ class Console(object):
             sys.exit(15)
 
         args = main_parser.parse_args()
+
+        if not hasattr(args, 'func'):
+            main_parser.print_help()
+
+            sys.exit(15)
 
         try:
             args.func(args)
