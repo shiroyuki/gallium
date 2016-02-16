@@ -9,9 +9,20 @@ So, the user can use run `gallium <sub-command> [...]` where the subcommands are
 imported and defined in `cli.json` from the current working directory.
 
 To override the default path of the configuration file, just run as
-`GALLIUM_CONF=/path/to/config/anyname.json gallium ...`.
+`GA_CONF=/path/to/config/anyname.json gallium ...`.
 
 Please remember that when you are in doubt, use the classic `-h` or `--help` to find out more.
+
+## How to install
+
+You can install either with PIP by executing `pip3 install gallium` or by using `setup.py`.
+
+This will install the supplied executables for both Python 3 and Python 2.7.
+
+## Supplied Executables (BSD, Linux and Mac OS X Only)
+
+* `gallium` and `g3` use Python 3 interpreter.
+* `g2` uses Python 2.7 or whatever `python` is set to.
 
 ## Configuration
 
@@ -45,6 +56,17 @@ The name of each subcommand is defined by either `ICommand.identifier()` for any
 commands via the basic setup or the ID of the command entity defined in the setup
 with Imagination Framework (the `identifier` method will be ignored in this type
 of setup).
+
+See an example from [the sample folder](sample).
+
+## How Gallium read configuration
+
+The supplied Gallium interface (`gallium`, `g2`, and `g3`) will read the
+configuration files in the following order.
+
+* /usr/local/gallium/etc/config.json (the system-wide config file)
+* ~/.gallium/config.json (the user config file)
+* ./cli.json (the local config file)
 
 ## Simplicity
 

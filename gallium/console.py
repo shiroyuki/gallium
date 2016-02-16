@@ -30,6 +30,8 @@ class Console(object):
         main_parser = argparse.ArgumentParser(self.name)
         subparsers  = main_parser.add_subparsers(help='sub-commands')
 
+        self._define_primary(main_parser)
+
         commands = {}
 
         for loader in self.loaders:
@@ -64,6 +66,13 @@ class Console(object):
             args.func(args)
         except KeyboardInterrupt as e:
             sys.exit(15)
+
+    def _define_primary(self, main_parser):
+        main_parser.add_argument(
+            '--debug',
+            help   = 'Enable the (global) debug mode',
+            action = 'store_true'
+        )
 
     def _register_command(self, subparsers, identifier, cls, instance):
         documentation  = cls.__doc__

@@ -6,7 +6,9 @@ Carbon Interfaces
 
 This is similar to controllers.
 """
+
 class ICommand(object):
+    """ Command Interface """
     @property
     def settings(self):
         return self.__settings
@@ -30,7 +32,7 @@ class ICommand(object):
             :return: the identifier (ID) for the command
             :rtype: str
         """
-        raise NotImplementedError('Interface method')
+        raise NotImplementedError()
 
     def define(self, parser):
         """ Define the arguments for this command.
@@ -38,9 +40,9 @@ class ICommand(object):
             :param argparse.ArgumentParser parser: the argument parser of the command
             :return: nothing
         """
-        raise NotImplementedError('Interface method')
+        raise NotImplementedError()
 
     def execute(self, args):
         """ The main method of the command
         """
-        raise NotImplementedError('Interface method')
+        raise NotImplementedError()

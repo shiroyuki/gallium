@@ -1,9 +1,21 @@
 #!/bin/bash
 BASE_PATH="$(dirname `pwd`/$0)/.."
-GALLIUM_CONF=$BASE_PATH/sample/cli.json
+GA_CONF=$BASE_PATH/sample/cli.json
 
-echo "-----"
-GALLIUM_CONF=$GALLIUM_CONF bin/gallium
-echo "-----"
-GALLIUM_CONF=$GALLIUM_CONF bin/gallium sample.file_lister sample
-echo "-----"
+echo "-------------------------------------------------------------------------"
+echo "RUN: WITHOUT THE SUBCOMMAND"
+echo "========================================================================="
+GA_CONF=$GA_CONF bin/gallium
+echo "-------------------------------------------------------------------------"
+echo "RUN: THE FILE LISTER COMMAND"
+echo "========================================================================="
+GA_CONF=$GA_CONF bin/gallium sample.file_lister sample
+echo "-------------------------------------------------------------------------"
+echo "RUN: THE ARGS INSPECTOR (HELP)"
+echo "========================================================================="
+GA_CONF=$GA_CONF bin/g3 --debug args.inspect -h
+echo "-------------------------------------------------------------------------"
+echo "RUN: THE ARGS INSPECTOR (EXECUTE)"
+echo "========================================================================="
+GA_CONF=$GA_CONF bin/g3 --debug args.inspect
+echo "-------------------------------------------------------------------------"
