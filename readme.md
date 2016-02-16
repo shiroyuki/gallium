@@ -107,4 +107,4 @@ Then, you can call this command by executing `gallium apple`.
 ## Extend the core.
 
 You can extend the core by implement `gallium.interface.IExtension`. Please
-check out the extentions for [Imagination Framework](https://github.com/shiroyuki/gallium/blob/master/gallium/ext/imagination.py) and [Passerine ORM](https://github.com/shiroyuki/gallium/blob/master/gallium/ext/passerine.py) with [Gallium Core](https://github.com/shiroyuki/gallium/blob/master/gallium/core/Core.py)
+check out the extentions for [Imagination Framework](https://github.com/shiroyuki/gallium/blob/master/gallium/ext/imagination.py) and [Passerine ORM](https://github.com/shiroyuki/gallium/blob/master/gallium/ext/passerine.py) with [Gallium Core](https://github.com/shiroyuki/gallium/blob/master/gallium/core.py)
