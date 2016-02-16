@@ -46,3 +46,22 @@ class ICommand(object):
         """ The main method of the command
         """
         raise NotImplementedError()
+
+class IExtension(object):
+    def config_key(self):
+        """ Configuration key
+
+            If the configuration key is not present, i.e., ``None``, the extension
+            will begin the initialization with a None object (a place holder).
+
+            :rtype: str or None
+        """
+        raise NotImplementedError()
+
+    def initialize(self, core, config = None):
+        """ Initialize the extension from the console.
+
+            :param gallium.core.Core core:   the Gallium core
+            :param dict              config: the extension-specific configuration
+        """
+        raise NotImplementedError()

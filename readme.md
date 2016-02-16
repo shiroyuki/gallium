@@ -103,3 +103,8 @@ Simply define an `ICommand` class as an entity, e.g.,
 ```
 
 Then, you can call this command by executing `gallium apple`.
+
+## Extend the core.
+
+You can extend the core by implement `gallium.interface.IExtension`. Please
+check out the extentions for [Imagination Framework](tree/master/gallium/ext/imagination.py) and [Passerine ORM](tree/master/gallium/ext/passerine.py) with [Gallium Core](tree/master/gallium/core/Core.py)

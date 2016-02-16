@@ -24,7 +24,7 @@ def __p(path):
     return os.path.join(base_path, path)
 
 def __update_config(base_config, updating_config):
-    for section in ['paths', 'services', 'imports', 'settings']:
+    for section in ['extensions', 'paths', 'services', 'imports', 'settings']:
         extending_list = updating_config[section] if section in updating_config else []
 
         if not extending_list:
@@ -51,10 +51,13 @@ def __can_read_any_of(*paths):
 def main():
     in_debug_mode = '--debug' in sys.argv
 
+    # Ensure that the base path is at the top of the Python paths.
     if base_path not in sys.path:
         sys.path.insert(0, base_path)
 
-    console_name      = __package__ or sys.argv[0]
+    console_name = __package__ or sys.argv[0]
+
+    # Load configuration files.
     local_config_path = os.getenv('GALLIUM_CONF') \
         or os.getenv('GA_CONF') \
         or __p('cli.json')
@@ -78,19 +81,12 @@ def main():
                 file_cli_config
             )
 
+    # Extends Python paths.
     if 'paths' in cli_config:
         sys.path.extend(cli_config['paths'])
 
-    service_config_paths = []
-
-    if 'services' in cli_config:
-        service_config_paths.extend([
-            __p(service_config_path)
-            for service_config_path in cli_config['services']
-        ])
-
+    # Initialize the Gallium core.
     framework_core = Core()
-    framework_core.load(*service_config_paths)
 
     basic_loader       = BasicLoader()
     imagination_loader = ImaginationLoader(framework_core)
@@ -103,6 +99,7 @@ def main():
     console = Console(
         name        = console_name,
         core        = framework_core,
+        config      = cli_config,
         config_path = local_config_path,
         loaders     = enabled_loaders
     )
