@@ -57,7 +57,7 @@ class Core(object):
 
     def set_entity(self, entity_id, entity_fqcn, *args, **kwargs):
         try:
-            entity = self._create_entity(entity_id, entity_fqcn, *args, **kwargs)
+            entity = self._create_entity(entity_id, entity_fqcn, args, kwargs)
 
             self.locator.set(entity_id, entity)
         except ImportError as exception:
