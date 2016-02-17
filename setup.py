@@ -5,7 +5,7 @@ except:
 
 setup(
     name         = 'gallium',
-    version      = '0.2.1',
+    version      = '0.2.5',
     description  = 'A micro CLI development framework',
     license      = 'MIT',
     author       = 'Juti Noppornpitak',
@@ -13,6 +13,7 @@ setup(
     url          = 'https://github.com/shiroyuki/carbon',
     packages     = [
         'gallium',
+        'gallium.ext',
         'gallium.loader',
     ],
     classifiers = [

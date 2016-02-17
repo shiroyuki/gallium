@@ -29,3 +29,7 @@ class FileLister(ICommand):
 
         for name in os.listdir(target_directory):
             print(name)
+
+        print('Calling the service.')
+
+        print(self.core.get('screen').echo('Hi there.'))

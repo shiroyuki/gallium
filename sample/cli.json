@@ -1,8 +1,10 @@
 {
     "paths": [
-        "sample"
+        "../"
     ],
-    "services": [],
+    "services": [
+        "imagination.xml"
+    ],
     "imports": [
         "gallium.sample.ArgsInspector",
         "app.allinone_commands",

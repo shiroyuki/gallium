@@ -49,8 +49,6 @@ def __can_read_any_of(*paths):
     return readable_paths
 
 def main():
-    in_debug_mode = '--debug' in sys.argv
-
     # Ensure that the base path is at the top of the Python paths.
     if base_path not in sys.path:
         sys.path.insert(0, base_path)
@@ -71,8 +69,6 @@ def main():
         raise IOError('{} is not readable.'.format(seeking_config_files[0]))
 
     for readable_file_path in readable_file_paths:
-        if in_debug_mode:
-            print('Reading the configuration file: {}'.format(readable_file_path))
         with codecs.open(readable_file_path, 'r') as f:
             file_cli_config = json.load(f)
 

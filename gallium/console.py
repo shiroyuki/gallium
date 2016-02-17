@@ -53,9 +53,9 @@ class Console(object):
 
                 if config_key is None:
                     # NOTE the extension will run without
-                    extension.initialize()
+                    extension.initialize(self.core)
                 elif config_key and ext_config:
-                    extension.initialize(ext_config)
+                    extension.initialize(self.core, ext_config)
 
         self.loaders = loaders
 
@@ -101,8 +101,8 @@ class Console(object):
 
     def _define_primary(self, main_parser):
         main_parser.add_argument(
-            '--debug',
-            help   = 'Enable the (global) debug mode',
+            '--debug-global',
+            help   = 'Enable the global debug mode',
             action = 'store_true'
         )
 
