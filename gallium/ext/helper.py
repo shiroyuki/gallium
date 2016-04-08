@@ -1,3 +1,9 @@
+import json
+
+from imagination.loader import Loader
+
+from ..interface import IExtension
+
 def activate(core, config):
     """ Activate/load the extensions
 
@@ -30,7 +36,13 @@ def activate(core, config):
                 else None
 
             if config_key is None:
-                # NOTE the extension will run without
+                # NOTE the extension will run without configuration
                 extension.initialize(core)
             elif config_key and ext_config:
                 extension.initialize(core, ext_config)
+            else:
+                raise RuntimeError('Failed to activate {}. (Config Key: {}, Existed: {})'.format(
+                    extension_fqcn,
+                    config_key,
+                    'Yes' if bool(ext_config) else 'No'
+                ))
