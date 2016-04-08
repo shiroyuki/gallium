@@ -9,8 +9,9 @@ import sys
 
 from imagination.loader import Loader
 
-from .core      import Core
-from .interface import ICommand, IExtension
+from .core       import Core
+from .ext.helper import activate
+from .interface  import ICommand, IExtension
 
 class Console(object):
     """ Console
@@ -28,34 +29,7 @@ class Console(object):
             with open(config_path) as f:
                 self.config.update(json.load(f))
 
-        extension_fqcns = config['extensions'] \
-            if 'extensions' in config \
-            else []
-
-        # Default extensions.
-        if 'gallium.ext.imagination.Extension' not in extension_fqcns:
-            extension_fqcns.insert(0, 'gallium.ext.imagination.Extension')
-
-        if extension_fqcns:
-            for extension_fqcn in extension_fqcns:
-                extension_class = Loader(extension_fqcn).package
-
-                if not issubclass(extension_class, IExtension):
-                    raise ValueError('{} is not a subclass of {}.'.format(
-                        extension_class.__name__,
-                        IExtension.__name__
-                    ))
-
-                extension = extension_class()
-
-                config_key = extension.config_key()
-                ext_config = config[config_key] if config_key and config_key in config else None
-
-                if config_key is None:
-                    # NOTE the extension will run without
-                    extension.initialize(self.core)
-                elif config_key and ext_config:
-                    extension.initialize(self.core, ext_config)
+        activate(self.core, self.config)
 
         self.loaders = loaders
 
@@ -112,6 +86,3 @@ class Console(object):
 
         instance.define(command_parser)
         command_parser.set_defaults(func=instance.execute)
-
-    def _prepare_db_connections(self):
-        self.core.prepare_db_connections(self.config['db'])

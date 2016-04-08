@@ -48,12 +48,10 @@ def __can_read_any_of(*paths):
 
     return readable_paths
 
-def main():
+def load_config():
     # Ensure that the base path is at the top of the Python paths.
     if base_path not in sys.path:
         sys.path.insert(0, base_path)
-
-    console_name = __package__ or sys.argv[0]
 
     # Load configuration files.
     local_config_path = os.getenv('GALLIUM_CONF') \
@@ -81,6 +79,15 @@ def main():
     if 'paths' in cli_config:
         sys.path.extend(cli_config['paths'])
 
+    return {
+        'content':    cli_config,
+        'local_path': local_config_path,
+    }
+
+def main():
+    console_name = __package__ or sys.argv[0]
+    config       = load_config()
+
     # Initialize the Gallium core.
     framework_core = Core()
 
@@ -95,8 +102,8 @@ def main():
     console = Console(
         name        = console_name,
         core        = framework_core,
-        config      = cli_config,
-        config_path = local_config_path,
+        config      = config['content'],
+        config_path = config['local_path'],
         loaders     = enabled_loaders
     )
 
