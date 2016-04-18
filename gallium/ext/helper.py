@@ -38,7 +38,7 @@ def activate(core, config):
             if config_key is None:
                 # NOTE the extension will run without configuration
                 extension.initialize(core)
-            elif config_key and ext_config:
+            elif config_key and ext_config is not None:
                 extension.initialize(core, ext_config)
             else:
                 raise RuntimeError('Failed to activate {}. (Config Key: {}, Existed: {})'.format(
