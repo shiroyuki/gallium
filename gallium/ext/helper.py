@@ -33,7 +33,7 @@ def activate(core, config):
             config_key = extension.config_key()
             ext_config = config[config_key] \
                 if (config_key and config_key in config) \
-                else None
+                else extension.default_settings()
 
             if config_key is None:
                 # NOTE the extension will run without configuration

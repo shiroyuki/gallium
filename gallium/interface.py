@@ -48,6 +48,9 @@ class ICommand(object):
         raise NotImplementedError()
 
 class IExtension(object):
+    def default_settings(self):
+        raise ValueError('No default settings')
+
     def config_key(self):
         """ Configuration key
 

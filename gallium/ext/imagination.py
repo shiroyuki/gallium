@@ -5,6 +5,9 @@ import os
 from ..interface import IExtension
 
 class Extension(IExtension):
+    def default_settings(self):
+        return []
+
     def config_key(self):
         return 'services'
 
