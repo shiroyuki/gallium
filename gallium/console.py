@@ -11,7 +11,8 @@ from imagination.loader import Loader
 
 from .core       import Core
 from .ext.helper import activate
-from .interface  import ICommand, IExtension
+from .helper     import Reflector
+from .interface  import ICommand, IExtension, alias_property_name
 
 class Console(object):
     """ Console
@@ -31,7 +32,9 @@ class Console(object):
 
         activate(self.core, self.config)
 
-        self.loaders = loaders
+        self.loaders  = loaders
+        self.commands = {}
+        self.settings = {}
 
     def activate(self):
         main_parser = argparse.ArgumentParser(self.name)
@@ -39,24 +42,23 @@ class Console(object):
 
         self._define_primary(main_parser)
 
-        commands = {}
+        try:
+            self.settings.update(self.config[type(self).CONST_CONF_KEY_CMD_SETTINGS])
+        except KeyError as e:
+            pass # not settings overridden
 
         for loader in self.loaders:
-            key      = loader.configuration_section_name()
-            settings = self.config[self.CONST_CONF_KEY_CMD_SETTINGS] \
-                if self.CONST_CONF_KEY_CMD_SETTINGS in self.config \
-                else {}
+            key = loader.configuration_section_name()
 
-            if key in self.config and self.config[key]:
-                for identifier, kind, command in loader.all(self.config[key]):
-                    self._register_command(subparsers, identifier, kind, command)
+            try:
+                loader_config = self.config[key]
+            except KeyError as e:
+                continue # nothing to load with this loader
 
-                    command.set_core(self.core)
-                    command.set_settings(settings)
+            for identifier, kind, command in loader.all(self.config[key]):
+                self._register_command(subparsers, identifier, kind, command)
 
-                    commands[identifier] = command
-
-        if not commands:
+        if not self.commands:
             print('No commands available')
 
             sys.exit(15)
@@ -75,14 +77,39 @@ class Console(object):
 
     def _define_primary(self, main_parser):
         main_parser.add_argument(
-            '--debug-global',
-            help   = 'Enable the global debug mode',
+            '--process-debug',
+            help   = 'Process-wide debug flag (this may or may not run Gallium in the debug mode.)',
             action = 'store_true'
         )
 
-    def _register_command(self, subparsers, identifier, cls, instance):
-        documentation  = cls.__doc__
-        command_parser = subparsers.add_parser(identifier, help=documentation)
+    def _register_command(self, subparsers, identifier, cls, command_instance):
+        # Handle the command interface.
+        self._add_parser(
+            subparsers,
+            identifier,
+            (
+                Reflector.short_description(cls.__doc__) \
+                or '(See {}.{})'.format(cls.__module__, cls.__name__)
+            ),
+            command_instance
+        )
 
-        instance.define(command_parser)
-        command_parser.set_defaults(func=instance.execute)
+        # Handle aliasing.
+        if hasattr(command_instance, alias_property_name):
+            for alias in getattr(command_instance, alias_property_name):
+                self._add_parser(
+                    subparsers,
+                    alias,
+                    'Alias to "{}"'.format(identifier),
+                    command_instance
+                )
+
+    def _add_parser(self, subparsers, identifier, documentation, command_instance):
+        parser = subparsers.add_parser(identifier, help=documentation)
+        parser.set_defaults(func=command_instance.execute)
+
+        command_instance.define(parser)
+        command_instance.set_core(self.core)
+        command_instance.set_settings(self.settings)
+
+        self.commands[identifier] = command_instance

@@ -1,3 +1,14 @@
+import os
+import sys
+
+version      = '0.6.0'
+primary_cmd  = 'bin/gallium'
+shortcut_cmd = 'bin/g{version}'.format(version = sys.version_info.major)
+install_cmds = [primary_cmd]
+
+if os.path.exists(shortcut_cmd):
+    install_cmds.append(shortcut_cmd)
+
 try:
     from setuptools import setup
 except:
@@ -5,7 +16,7 @@ except:
 
 setup(
     name         = 'gallium',
-    version      = '0.5.2',
+    version      = version,
     description  = 'A micro CLI development framework',
     license      = 'MIT',
     author       = 'Juti Noppornpitak',
@@ -13,6 +24,7 @@ setup(
     url          = 'https://github.com/shiroyuki/carbon',
     packages     = [
         'gallium',
+        'gallium.cli',
         'gallium.ext',
         'gallium.loader',
     ],
@@ -26,6 +38,6 @@ setup(
         'Programming Language :: Python :: 3',
         'Topic :: Software Development :: Libraries'
     ],
-    scripts          = ['bin/gallium', 'bin/g2', 'bin/g3'],
+    scripts          = install_cmds,
     install_requires = ['imagination', 'kotoba']
 )

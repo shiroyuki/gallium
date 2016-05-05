@@ -7,8 +7,10 @@ Carbon Interfaces
 This is similar to controllers.
 """
 
+alias_property_name = '__gallium_cli_aliases__'
+
 class ICommand(object):
-    """ Command Interface """
+    """ Subcommand Interface """
     @property
     def settings(self):
         return self.__settings
@@ -49,7 +51,12 @@ class ICommand(object):
 
 class IExtension(object):
     def default_settings(self):
-        raise ValueError('No default settings')
+        """ Extension's default settings
+
+            This methos is only used to retrieve the default settings of the
+            extension **ONLY IF** the configuration key is present.
+        """
+        raise ValueError('No settings, including the default one')
 
     def config_key(self):
         """ Configuration key
@@ -68,3 +75,15 @@ class IExtension(object):
             :param dict              config: the extension-specific configuration
         """
         raise NotImplementedError()
+
+def alias(*names):
+    def make_alias(cls):
+        if not hasattr(cls, alias_property_name):
+            setattr(cls, alias_property_name, set())
+
+        for name in names:
+            getattr(cls, alias_property_name).add(name)
+
+        return cls
+
+    return make_alias

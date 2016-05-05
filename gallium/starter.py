@@ -64,7 +64,7 @@ def load_config():
     cli_config = {}
 
     if not readable_file_paths:
-        raise IOError('{} is not readable.'.format(seeking_config_files[0]))
+        raise IOError('{} neither existed nor readable'.format(seeking_config_files[0]))
 
     for readable_file_path in readable_file_paths:
         with codecs.open(readable_file_path, 'r') as f:
@@ -86,7 +86,12 @@ def load_config():
 
 def main():
     console_name = __package__ or sys.argv[0]
-    config       = load_config()
+
+    try:
+        config = load_config()
+    except IOError as e:
+        print(e)
+        sys.exit(255)
 
     # Initialize the Gallium core.
     framework_core = Core()
@@ -99,11 +104,14 @@ def main():
         imagination_loader
     ]
 
+    # Add the utility for Imagination framework.
+    config['content']['imports'].insert(0, 'gallium.cli.imagination')
+
+    # Create a console interface.
     console = Console(
         name        = console_name,
         core        = framework_core,
         config      = config['content'],
-        config_path = config['local_path'],
         loaders     = enabled_loaders
     )
 
