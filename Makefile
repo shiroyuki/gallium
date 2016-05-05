@@ -12,10 +12,13 @@ release:
 	@$(PY) setup.py sdist upload
 
 docker-image:
-	docker build -t $(LXC_IMAGE_TAG) .
+	@docker build -t $(LXC_IMAGE_TAG) .
 
 docker-run: docker-image
-	docker run -it --rm $(LXC_RUN_OPTS) $(LXC_IMAGE_TAG) $(LXC_RUN_ARGS)
+	@docker run -it --rm $(LXC_RUN_OPTS) $(LXC_IMAGE_TAG) $(LXC_RUN_ARGS)
+
+run-sample-isolation:
+	@make LXC_RUN_OPTS="--entrypoint=make" LXC_RUN_ARGS="run-sample" docker-image docker-run
 
 run-sample: install-local
 	@echo "-------------------------------------------------------------------------"
