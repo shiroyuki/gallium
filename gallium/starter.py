@@ -85,7 +85,7 @@ def load_config():
     }
 
 def main():
-    console_name = __package__ or sys.argv[0]
+    console_name = os.path.basename(sys.argv[0]) or __package__
 
     try:
         config = load_config()

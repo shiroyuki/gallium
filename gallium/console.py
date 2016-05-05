@@ -41,7 +41,9 @@ class Console(object):
 
     def activate(self):
         main_parser = argparse.ArgumentParser(self.name)
-        subparsers  = main_parser.add_subparsers(help='subcommands')
+        subparsers  = main_parser.add_subparsers(
+            description = 'Available subcommands discovered by the configuration'
+        )
 
         self._define_primary(main_parser)
 
@@ -79,12 +81,15 @@ class Console(object):
 
         # Parse arguments and execute.
         try:
-            args = main_parser.parse_args()
+            args = main_parser.parse_known_args()
         except Exception as e:
             print(type(e))
 
         if not hasattr(args, 'func'):
-            main_parser.print_help()
+            if len(sys.argv) > 1 and sys.argv[1] in self.commands:
+                self.commands[sys.argv[1]]['parser'].print_help()
+            else:
+                main_parser.print_help()
 
             sys.exit(15)
 
@@ -126,7 +131,7 @@ class Console(object):
 
     def _add_parser(self, subparsers, identifier, documentation, command_instance):
         if identifier in self.commands:
-            registered_command_instance = self.commands[identifier]
+            registered_command_instance = self.commands[identifier]['instance']
             registered_command_class    = type(registered_command_instance)
             registered_command_fqcn     = Reflector.fqcn(registered_command_class)
             registered_command_doc      = Reflector.short_description(registered_command_class)
@@ -148,4 +153,7 @@ class Console(object):
         command_instance.set_core(self.core)
         command_instance.set_settings(self.settings)
 
-        self.commands[identifier] = command_instance
+        self.commands[identifier] = {
+            'parser':   parser,
+            'instance': command_instance,
+        }
