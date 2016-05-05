@@ -1,13 +1,13 @@
 import re
 import sys
-from imagination.locator import Locator
-from gallium.interface   import ICommand, alias
-from gallium.helper      import Reflector
+
+from imagination.exception import UnknownEntityError
+from imagination.locator   import Locator
+
+from ..interface   import ICommand, alias
+from ..helper      import Reflector
 
 class EntityManagementCommand(object):
-    # static property
-    reflector = Reflector()
-
     def get_id_to_wrapper_map(self):
         locator     = self.core.locator
         identifiers = locator.entity_identifiers
@@ -30,6 +30,7 @@ class EntityManagementCommand(object):
 
 @alias('services')
 class EntityList(ICommand, EntityManagementCommand):
+    """ List all the registered entities/services. """
     def identifier(self):
         return 'services.list'
 
@@ -59,6 +60,7 @@ class EntityList(ICommand, EntityManagementCommand):
 
 @alias('doc')
 class EntityShow(ICommand, EntityManagementCommand):
+    """ Show short description of given entity/service IDs. """
     def identifier(self):
         return 'services.show'
 
@@ -76,8 +78,17 @@ class EntityShow(ICommand, EntityManagementCommand):
             self._show_details(id)
 
     def _show_details(self, id):
-        wrapper = self.core.locator.get_wrapper(id)
-        cls     = self.get_class(wrapper)
+        try:
+            wrapper = self.core.locator.get_wrapper(id)
+        except UnknownEntityError as e:
+            message = str(e)
+            message = message[0].lower() + (message[1:] if len(message) > 1 else '')
+
+            print('Cannot retrieve the short documentation as {}'.format(message))
+
+            sys.exit(1)
+
+        cls = self.get_class(wrapper)
 
         # Title
         print('\n+{breaker}+\n| {sid} |\n+{breaker}+'.format(

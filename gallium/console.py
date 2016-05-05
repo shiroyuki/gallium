@@ -14,6 +14,8 @@ from .ext.helper import activate
 from .helper     import Reflector
 from .interface  import ICommand, IExtension, alias_property_name
 
+class AliasNotRegisteredError(RuntimeError): pass
+
 class Console(object):
     """ Console
 
@@ -34,11 +36,12 @@ class Console(object):
 
         self.loaders  = loaders
         self.commands = {}
+        self.aliases  = {}
         self.settings = {}
 
     def activate(self):
         main_parser = argparse.ArgumentParser(self.name)
-        subparsers  = main_parser.add_subparsers(help='sub-commands')
+        subparsers  = main_parser.add_subparsers(help='subcommands')
 
         self._define_primary(main_parser)
 
@@ -46,6 +49,8 @@ class Console(object):
             self.settings.update(self.config[type(self).CONST_CONF_KEY_CMD_SETTINGS])
         except KeyError as e:
             pass # not settings overridden
+
+        loading_targets = []
 
         for loader in self.loaders:
             key = loader.configuration_section_name()
@@ -55,15 +60,28 @@ class Console(object):
             except KeyError as e:
                 continue # nothing to load with this loader
 
-            for identifier, kind, command in loader.all(self.config[key]):
-                self._register_command(subparsers, identifier, kind, command)
+            loading_targets.extend([
+                (identifier, kind, command)
+                for identifier, kind, command in loader.all(loader_config)
+            ])
 
+        loading_targets.sort(key=lambda target: target[0]) # sort by identifier
+
+        # Register commands.
+        for identifier, kind, command in loading_targets:
+            self._register_command(subparsers, identifier, kind, command)
+
+        # If commands do not exist...
         if not self.commands:
             print('No commands available')
 
             sys.exit(15)
 
-        args = main_parser.parse_args()
+        # Parse arguments and execute.
+        try:
+            args = main_parser.parse_args()
+        except Exception as e:
+            print(type(e))
 
         if not hasattr(args, 'func'):
             main_parser.print_help()
@@ -88,7 +106,7 @@ class Console(object):
             subparsers,
             identifier,
             (
-                Reflector.short_description(cls.__doc__) \
+                Reflector.short_description(cls) \
                 or '(See {}.{})'.format(cls.__module__, cls.__name__)
             ),
             command_instance
@@ -97,14 +115,32 @@ class Console(object):
         # Handle aliasing.
         if hasattr(command_instance, alias_property_name):
             for alias in getattr(command_instance, alias_property_name):
+                self.aliases[alias] = identifier
+
                 self._add_parser(
                     subparsers,
                     alias,
-                    'Alias to "{}"'.format(identifier),
+                    '\u2192 Alias to "{}"'.format(identifier),
                     command_instance
                 )
 
     def _add_parser(self, subparsers, identifier, documentation, command_instance):
+        if identifier in self.commands:
+            registered_command_instance = self.commands[identifier]
+            registered_command_class    = type(registered_command_instance)
+            registered_command_fqcn     = Reflector.fqcn(registered_command_class)
+            registered_command_doc      = Reflector.short_description(registered_command_class)
+            target_command_fqcn         = Reflector.fqcn(type(command_instance))
+
+            raise AliasNotRegisteredError(
+                'Cannot set "{}" for {} as it refers to {} ({})'.format(
+                    identifier,
+                    target_command_fqcn,
+                    registered_command_fqcn,
+                    registered_command_doc
+                )
+            )
+
         parser = subparsers.add_parser(identifier, help=documentation)
         parser.set_defaults(func=command_instance.execute)
 
