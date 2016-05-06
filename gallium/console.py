@@ -80,12 +80,9 @@ class Console(object):
             sys.exit(15)
 
         # Parse arguments and execute.
-        try:
-            args = main_parser.parse_known_args()
-        except Exception as e:
-            print(type(e))
+        args, unknown_args = main_parser.parse_known_args()
 
-        if not hasattr(args, 'func'):
+        if not hasattr(args, 'func') or unknown_args:
             if len(sys.argv) > 1 and sys.argv[1] in self.commands:
                 self.commands[sys.argv[1]]['parser'].print_help()
             else:

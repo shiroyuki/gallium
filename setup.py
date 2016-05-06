@@ -1,7 +1,7 @@
 import os
 import sys
 
-version      = '0.6.6'
+version      = '0.7.0'
 primary_cmd  = 'bin/gallium'
 shortcut_cmd = 'bin/g{version}'.format(version = sys.version_info.major)
 install_cmds = [primary_cmd]
