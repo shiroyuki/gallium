@@ -12,8 +12,13 @@ base_path = os.path.abspath(os.getcwd())
 global_base_path        = '/usr/local/gallium'
 global_config_path      = os.path.join(global_base_path, 'etc')
 global_config_file_path = os.path.join(global_config_path, 'config.json')
-default_user_home_path  = os.path.join(os.getenv('HOME'), '.gallium')
-user_home_path          = os.getenv('GALLIUM_HOME') or default_user_home_path
+user_home_path          = os.getenv('GALLIUM_HOME') or ''
+
+# On Windows, Gallium will not look into the user configuration.
+if os.name != 'nt':
+    default_user_home_path  = os.path.join(os.getenv('HOME'), '.gallium')
+    user_home_path          = os.getenv('GALLIUM_HOME') or default_user_home_path
+
 user_config_file_path   = os.path.join(user_home_path, 'config.json')
 
 symlinks = {
@@ -84,14 +89,19 @@ def load_config():
         'local_path': local_config_path,
     }
 
-def main():
+def main(config_content = None):
     console_name = os.path.basename(sys.argv[0]) or __package__
 
-    try:
-        config = load_config()
-    except IOError as e:
-        print(e)
-        sys.exit(255)
+    config = {}
+
+    if config_content:
+        config['content'] = config_content
+    else:
+        try:
+            config.update(load_config())
+        except IOError as e:
+            print(e)
+            sys.exit(255)
 
     # Initialize the Gallium core.
     framework_core = Core()
@@ -109,10 +119,10 @@ def main():
 
     # Create a console interface.
     console = Console(
-        name        = console_name,
-        core        = framework_core,
-        config      = config['content'],
-        loaders     = enabled_loaders
+        name    = console_name,
+        core    = framework_core,
+        config  = config['content'],
+        loaders = enabled_loaders
     )
 
     console.activate()

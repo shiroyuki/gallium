@@ -5,6 +5,7 @@
 
 import argparse
 import json
+import os
 import sys
 
 from imagination.loader import Loader
@@ -98,7 +99,7 @@ class Console(object):
     def _define_primary(self, main_parser):
         main_parser.add_argument(
             '--process-debug',
-            help   = 'Process-wide debug flag (this may or may not run Gallium in the debug mode.)',
+            help   = self._reencode_doc('Process-wide debug flag (this may or may not run Gallium in the debug mode.)'),
             action = 'store_true'
         )
 
@@ -143,7 +144,7 @@ class Console(object):
                 )
             )
 
-        parser = subparsers.add_parser(identifier, help=documentation)
+        parser = subparsers.add_parser(identifier, help = self._reencode_doc(documentation))
         parser.set_defaults(func=command_instance.execute)
 
         command_instance.define(parser)
@@ -154,3 +155,10 @@ class Console(object):
             'parser':   parser,
             'instance': command_instance,
         }
+
+    def _reencode_doc(self, text):
+        # For non-Windows OSes, this is unnecessary.
+        if os.name != 'nt':
+            return text
+
+        return text.encode('ascii', 'ignore').decode('ascii', 'ignore')

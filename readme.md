@@ -108,3 +108,31 @@ Then, you can call this command by executing `gallium apple`.
 
 You can extend the core by implement `gallium.interface.IExtension`. Please
 check out the extentions for [Imagination Framework](https://github.com/shiroyuki/gallium/blob/master/gallium/ext/imagination.py) and [Passerine ORM](https://github.com/shiroyuki/gallium/blob/master/gallium/ext/passerine.py) with [Gallium Core](https://github.com/shiroyuki/gallium/blob/master/gallium/core.py)
+
+## Limitations
+
+#### Limited supports on Windows
+
+The support for **Windows 10** is added since **version 0.8**.
+
+Please note that the command line will be installed but not usable as it is
+designed to work with **Bash** or UNIX/BSD/Linux shell. It might work when
+Microsoft releases the updates for Windows 10 with Bash.
+
+Until then, you can create a Python script with the following code.
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from gallium.starter   import main
+
+if __name__ == '__main__':
+    main() # which requires "cli.json"
+
+    # Alternatively you can pass a config dictionary like this:
+    # main({
+    #     'imports': [
+    #         # ...
+    #     ]
+    # })
+```
