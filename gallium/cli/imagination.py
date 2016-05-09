@@ -63,6 +63,8 @@ class EntityList(ICommand, EntityManagementCommand):
         print(row_template.format(sid = 'Service', cn = 'Class'))
         print(' '.join(['-' * max_id_length, '-' * max_cn_length]))
 
+        identifiers.sort()
+
         for id in identifiers:
             print(row_template.format(
                 sid = id,
