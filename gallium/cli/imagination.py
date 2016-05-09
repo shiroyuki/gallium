@@ -1,8 +1,10 @@
 import re
 import sys
 
-from imagination.exception import UnknownEntityError
-from imagination.locator   import Locator
+from imagination.entity        import CallbackProxy, ReferenceProxy
+from imagination.exception     import UnknownEntityError
+from imagination.factorization import Factorization
+from imagination.locator       import Locator
 
 from ..interface   import ICommand, alias
 from ..helper      import Reflector
@@ -15,9 +17,8 @@ class EntityManagementCommand(object):
 
         for identifier in identifiers:
             wrapper = locator.get_wrapper(identifier)
-            kind    = Locator \
-                if isinstance(wrapper, Locator) \
-                else wrapper.loader.package
+
+            kind = self.get_wrapped_class(wrapper)
 
             wrapper_map[identifier] = kind
 
@@ -27,6 +28,18 @@ class EntityManagementCommand(object):
         return Locator \
             if isinstance(wrapper, Locator) \
             else wrapper.loader.package
+
+    def get_wrapped_class(self, wrapper):
+        if isinstance(wrapper, Locator):
+            return Locator
+        elif hasattr(wrapper, 'loader'):
+            return wrapper.loader.package
+        elif isinstance(wrapper, Factorization):
+            return Factorization
+        elif type(wrapper) in (CallbackProxy, ReferenceProxy):
+            return Factorization
+
+        raise RuntimeError('Failed to retrieve the wrapper class.')
 
 @alias('services')
 class EntityList(ICommand, EntityManagementCommand):
