@@ -4,8 +4,13 @@ G3_CLI=cd sample && gallium
 LXC_IMAGE_TAG=shiroyuki/gallium
 LXC_RUN_OPTS=
 LXC_RUN_ARGS=
+
 package:
+	@rm -v dist/*
 	@$(PY) setup.py sdist
+
+install:
+	@$(PIP) install -IU --force-reinstall dist/*
 
 # Not using bdist_wheel due to permission issue.
 release:

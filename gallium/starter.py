@@ -29,8 +29,12 @@ def __p(path):
     return os.path.join(base_path, path)
 
 def __update_config(base_config, updating_config):
-    for section in ['extensions', 'paths', 'services', 'imports', 'settings']:
-        extending_list = updating_config[section] if section in updating_config else []
+    required_sections = ('extensions', 'paths', 'services', 'imports', 'settings')
+
+    for section in required_sections:
+        extending_list = updating_config[section] \
+            if section in updating_config \
+            else []
 
         if not extending_list:
             continue
@@ -38,8 +42,33 @@ def __update_config(base_config, updating_config):
         if section not in base_config:
             base_config[section] = []
 
-        base_config[section].extend(extending_list)
-        base_config[section] = list(set(base_config[section]))
+        for item in extending_list:
+            base_config[section].append(item)
+
+    for section in updating_config:
+        if section in required_sections:
+            continue
+
+        if section not in base_config:
+            base_config[section] = updating_config[section]
+
+            continue
+
+        updated = updating_config[section]
+
+        if isinstance(updated, list):
+            for item in updated:
+                base_config[section].append(item)
+
+            continue
+
+        elif isinstance(updated, dict):
+            for item_key in updated:
+                base_config[section][item_key] = updated[item_key]
+
+            continue
+
+        base_config[section] = updated
 
 def __is_readable(path):
     return os.path.exists(path) and os.access(path, os.R_OK)
