@@ -1,4 +1,14 @@
+import contextlib
+import os
 import re
+
+@contextlib.contextmanager
+def work_from(temporary_working_dir):
+    origin = os.getcwd()
+
+    os.chdir(temporary_working_dir)
+    yield
+    os.chdir(origin)
 
 class Reflector(object):
     re_newline      = re.compile('(\r?\n){2,}')
