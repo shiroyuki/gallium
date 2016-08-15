@@ -1,26 +1,24 @@
 import re
 import sys
 
-from imagination.entity        import CallbackProxy, ReferenceProxy
-from imagination.exception     import UnknownEntityError
-from imagination.factorization import Factorization
-from imagination.locator       import Locator
+from imagination.meta.container import Entity, Factorization, Lambda
+from imagination.exception      import UnknownEntityError
+# from imagination.entity        import CallbackProxy, ReferenceProxy
+# from imagination.factorization import Factorization
+# from imagination.locator       import Locator
 
-from ..interface   import ICommand, alias
-from ..helper      import Reflector
+from ..interface import ICommand, alias
+from ..helper    import Reflector
+
 
 class EntityManagementCommand(object):
     def get_id_to_wrapper_map(self):
-        locator     = self.core.locator
-        identifiers = locator.entity_identifiers
-        wrapper_map  = {}
+        locator     = self._core
+        identifiers = locator.all_ids()
+        wrapper_map = {}
 
         for identifier in identifiers:
-            wrapper = locator.get_wrapper(identifier)
-
-            kind = self.get_wrapped_class(wrapper)
-
-            wrapper_map[identifier] = kind
+            wrapper_map[identifier] = locator.get_metadata(identifier).fqcn
 
         return wrapper_map
 
@@ -40,6 +38,7 @@ class EntityManagementCommand(object):
             return Factorization
 
         raise RuntimeError('Failed to retrieve the wrapper class.')
+
 
 @alias('services')
 class EntityList(ICommand, EntityManagementCommand):
@@ -72,6 +71,7 @@ class EntityList(ICommand, EntityManagementCommand):
             ))
 
         print('\nMore details with "g3 services.show <Service ID>"\n')
+
 
 @alias('doc')
 class EntityShow(ICommand, EntityManagementCommand):

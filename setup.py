@@ -1,7 +1,7 @@
 import os
 import sys
 
-version      = '0.11.1'
+version      = '1.0.0a1'
 primary_cmd  = 'bin/gallium'
 shortcut_cmd = 'bin/g{version}'.format(version = sys.version_info.major)
 install_cmds = [primary_cmd]
@@ -34,10 +34,13 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Topic :: Software Development :: Libraries'
     ],
     scripts          = install_cmds,
-    install_requires = ['imagination==1.30.0,<2', 'kotoba', 'pyyaml']
+    install_requires = [
+        'kotoba',
+        # 'imagination==1.30.0,<2',
+        'pyyaml'
+    ]
 )

@@ -25,8 +25,10 @@ symlinks = {
     global_config_path: '/etc/gallium',
 }
 
+
 def __p(path):
     return os.path.join(base_path, path)
+
 
 def __update_config(base_config, updating_config):
     required_sections = ('extensions', 'paths', 'services', 'imports', 'settings')
@@ -70,8 +72,10 @@ def __update_config(base_config, updating_config):
 
         base_config[section] = updated
 
+
 def __is_readable(path):
     return os.path.exists(path) and os.access(path, os.R_OK)
+
 
 def __can_read_any_of(*paths):
     readable_paths = []
@@ -81,6 +85,7 @@ def __can_read_any_of(*paths):
             readable_paths.append(os.path.abspath(path))
 
     return readable_paths
+
 
 def load_config():
     # Ensure that the base path is at the top of the Python paths.
@@ -118,6 +123,7 @@ def load_config():
         'local_path': local_config_path,
     }
 
+
 def main(config_content = None):
     console_name = os.path.basename(sys.argv[0]) or __package__
 
@@ -130,17 +136,17 @@ def main(config_content = None):
             config.update(load_config())
         except IOError as e:
             print(e)
-            sys.exit(255)
+            sys.exit(1)
 
     # Initialize the Gallium core.
     framework_core = Core()
 
     basic_loader       = BasicLoader()
-    imagination_loader = ImaginationLoader(framework_core)
+    # imagination_loader = ImaginationLoader(framework_core)
 
     enabled_loaders = [
         basic_loader,
-        imagination_loader
+        # imagination_loader
     ]
 
     # Add the utility for Imagination framework.

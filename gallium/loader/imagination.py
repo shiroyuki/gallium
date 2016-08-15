@@ -1,8 +1,11 @@
 from .common import ILoader
 from ..interface import ICommand
 
+
 class Loader(object):
     """ The default loader integrated with the core of the framework.
+
+        TODO update this to be compatible with Imagination 2.
     """
     def __init__(self, core):
         self.core = core

@@ -7,12 +7,10 @@ Carbon Core
 
 from contextlib import contextmanager
 
-from imagination.helper.assembler import Assembler
-from imagination.helper.data      import Transformer
-# from imagination.entity  import CallbackProxy
-from imagination.entity  import Entity
-from imagination.loader  import Loader
-from imagination.locator import Locator
+from imagination.assembler.core  import Assembler
+from imagination.meta.container  import Entity, Factorization, Lambda
+from imagination.meta.definition import DataDefinition
+
 
 class Core(object):
     """ The Core of the Framework
@@ -20,31 +18,19 @@ class Core(object):
         This relies on Imagination Framework.
     """
     def __init__(self, locator=None):
-        self.locator     = locator or Locator()
-        self.transformer = Transformer(self.locator)
-        self.assembler   = Assembler(self.transformer)
+        self.assembler = Assembler()
 
-        self._cache_map = None
-
-    @contextmanager
-    def passive_mode(self):
-        self.assembler.activate_passive_loading()
-        yield
-        self.assembler.deactivate_passive_loading()
+    @property
+    def _core(self):
+        return self.assembler.core
 
     def get(self, id):
         """ Get the service container. """
-        return self.locator.get(id)
+        return self._core.get(id)
 
     def load(self, *paths):
         """ Load service containers from multiple configuration files. """
-        with self.passive_mode():
-            [
-                self.assembler.load(path)
-                for path in paths
-            ]
-
-            self._cache_map = None
+        self.assembler.load(*paths)
 
     def all(self):
         if not self._cache_map:
@@ -55,15 +41,19 @@ class Core(object):
 
         return self._cache_map
 
-    def set_entity(self, entity_id, entity_fqcn, *args, **kwargs):
-        try:
-            entity = self._create_entity(entity_id, entity_fqcn, args, kwargs)
+    def set_entity(self, entity_id, fqcn):
+        container = Entity(identifier = entity_id, fqcn = fqcn)
 
-            self.locator.set(entity_id, entity)
-        except ImportError as exception:
-            raise ImportError('Failed to register {} ({})'.format(entity_id, entity_fqcn))
+        self._core.update_metadata({entity_id: container})
 
-    def _create_entity(self, id, entity_fqcn, args, kwargs):
-        loader = Loader(entity_fqcn)
+    def set_factorization(self, entity_id, factory_id, factory_method_name):
+        container = Factorization(entity_id, factory_id, factory_method_name)
 
-        return Entity(id, loader, *args, **kwargs)
+        self._core.update_metadata({entity_id: container})
+
+    def set_entity_param(self, entity_id, kind, value,
+                         transformation_required = False, name = None):
+        definition = DataDefinition(value, name, kind, transformation_required)
+        metadata   = self._core.get_metadata(entity_id)
+
+        metadata.params.add(definition, name)
