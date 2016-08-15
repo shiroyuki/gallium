@@ -32,15 +32,6 @@ class Core(object):
         """ Load service containers from multiple configuration files. """
         self.assembler.load(*paths)
 
-    def all(self):
-        if not self._cache_map:
-            self._cache_map = {
-                i: self.locator.get(i)
-                for i in self.locator.entity_identifiers
-            }
-
-        return self._cache_map
-
     def set_entity(self, entity_id, fqcn):
         container = Entity(identifier = entity_id, fqcn = fqcn)
 
@@ -57,3 +48,9 @@ class Core(object):
         metadata   = self._core.get_metadata(entity_id)
 
         metadata.params.add(definition, name)
+
+    def inject_entity_dependency(self, entity_id, dependency_id, name = None):
+        self.set_entity_param(entity_id, 'entity', dependency_id, True, name)
+
+    def inject_entity_classinfo(self, entity_id, fqcn, name = None):
+        self.set_entity_param(entity_id, 'class', fqcn, True, name)
