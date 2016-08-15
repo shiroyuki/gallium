@@ -44,6 +44,11 @@ class Core(object):
 
         self._core.update_metadata({entity_id: container})
 
+    def set_lambda(self, entity_id, import_path):
+        container = Lambda(entity_id, import_path)
+
+        self._core.update_metadata({entity_id: container})
+
     def set_entity_param(self, entity_id, kind, value,
                          transformation_required = False, name = None):
         """ Define a constructor parameter for a particular entity. """
