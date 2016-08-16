@@ -22,6 +22,10 @@ class Core(object):
 
     @property
     def _core(self):
+        return self.container
+
+    @property
+    def container(self):
         return self.assembler.core
 
     def get(self, id):
