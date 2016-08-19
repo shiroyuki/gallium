@@ -42,7 +42,7 @@ def __update_config(base_config, updating_config):
             continue
 
         if section not in base_config:
-            base_config[section] = []
+            base_config[section] = dict() if section == 'settings' else list()
 
         for item in extending_list:
             base_config[section].append(item)
