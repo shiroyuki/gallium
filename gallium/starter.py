@@ -34,18 +34,25 @@ def __update_config(base_config, updating_config):
     required_sections = ('extensions', 'paths', 'services', 'imports', 'settings')
 
     for section in required_sections:
-        extending_list = updating_config[section] \
-            if section in updating_config \
-            else []
+        is_settings   = section == 'settings'
+        default_value = dict() if is_settings else list()
 
-        if not extending_list:
+        extended_config = updating_config[section] \
+            if section in updating_config \
+            else None
+
+        if not extended_config:
             continue
 
         if section not in base_config:
-            base_config[section] = dict() if section == 'settings' else list()
+            base_config[section] = default_value
 
-        for item in extending_list:
-            base_config[section].append(item)
+        section = base_config[section]
+
+        if is_settings:
+            section.update(extended_config)
+        else:
+            section.extend(extended_config)
 
     for section in updating_config:
         if section in required_sections:
