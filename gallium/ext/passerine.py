@@ -8,6 +8,7 @@ from imagination.entity import CallbackProxy
 from imagination.loader import Loader
 
 class Extension(IExtension):
+    """ .. warning:: this extension is no longer supported due to compatibility with Imagination 2. """
     def config_key(self):
         return 'orm'
 
