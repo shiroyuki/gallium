@@ -168,7 +168,8 @@ def main(config_content = None, readable_file_paths = None, default_file_name = 
 
     config = {
         'content': {
-            'imports': []
+            'imports'    : [],
+            'extensions' : [],
         }
     }
 
