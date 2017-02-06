@@ -13,7 +13,8 @@ from imagination.loader import Loader
 from .core       import Core
 from .ext.helper import activate
 from .helper     import Reflector
-from .interface  import ICommand, IExtension, alias_property_name
+from .interface  import ICommand, IExtension, alias_property_name, \
+                        EmptyResponse, EmergencyExit
 
 class AliasNotRegisteredError(RuntimeError): pass
 
@@ -93,7 +94,16 @@ class Console(object):
 
         try:
             args.func(args)
+        except AssertionError as e:
+            sys.stderr.write('{}\n'.format(e))
+            sys.exit(1)
+        except EmptyResponse as e:
+            sys.stderr.write('{}\n'.format(e))
+            sys.exit(1)
+        except EmergencyExit as e:
+            sys.exit(int(str(e)))
         except KeyboardInterrupt as e:
+            sys.stderr.write('\nProcess terminated by the user.\n')
             sys.exit(15)
 
     def _define_primary(self, main_parser):

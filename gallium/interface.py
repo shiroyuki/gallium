@@ -12,6 +12,15 @@ import time
 
 alias_property_name = '__gallium_cli_aliases__'
 
+
+class EmergencyExit(RuntimeError):
+    """ Emergency Exit (the message is the exit code) """
+
+
+class EmptyResponse(RuntimeError):
+    """ Empty Response """
+
+
 class ICommand(object):
     """ Subcommand Interface """
     @property
@@ -52,8 +61,22 @@ class ICommand(object):
         """
         raise NotImplementedError()
 
-    def ask(self, message, choices = None, default = None, repeat_limit = None):
+    def ask(self, message, choices : dict = None, default = None,
+            repeat_limit = None, kind : type = None, validate : callable = None):
         """ Ask for response.
+
+            :param type kind:
+                the type of the response
+            :param callable validate:
+                the callable to validate the input outside the simple restricting
+                options. The callable must take only one parameter which is of
+                the given data type (default to string). The callable also must
+                return ``None`` or ``True`` on valid response. Otherwise, it must
+                return ``False`` (generic error will be used) or raise AssertionError
+                which the custom error message from the error object will be used.
+
+            .. versionadded:: 1.1
+               The parameters ``kind`` and ``validate`` are added.
         """
         blocks = [message]
 
@@ -79,26 +102,33 @@ class ICommand(object):
             if not response:
                 response = default
 
+            kind(response) if kind and callable(kind) else response
+
             if choices and response.lower() not in choices:
                 error = 'Please respond with "{}".'.format('" or "'.join(choices))
+
                 continue
 
+            try:
+                if validate and not validate(response):
+                    error = 'Invalid response'
+            except AssertionError as e:
+                error = str(e)
+
             error = None
+
             break
 
         if error:
-            print(error)
-            sys.exit(1)
+            raise AssertionError(error)
 
         if default is None and not response:
-            print('Your response cannot be empty.')
-            sys.exit(1)
+            raise EmptyResponse('Your response cannot be empty.')
 
         return response
 
     def stand_by(self, message, delay, on_sigint = None):
-        """ Stand by and wait until the user sends SIGINT via keyboard.
-        """
+        """ Stand by and wait until the user sends SIGINT via keyboard. """
         print(message)
 
         try:
@@ -109,6 +139,13 @@ class ICommand(object):
                     raise RuntimeError('The callback handler must be callable.')
 
                 on_sigint()
+            # endif
+
+    def alert(self, message):
+        sys.stderr.write('{}\n'.format(message))
+
+    def bail_out(self, code = 1):
+        raise EmergencyExit(code)
 
 class IExtension(object):
     def default_settings(self):

@@ -1,7 +1,14 @@
 import os
 import sys
 
-version      = '1.0.0a4'
+_minimum_version = (3, 4)
+
+if sys.version_info < _minimum_version:
+    raise RuntimeError('Required Python {}'.format(
+        '.'.join([str(i) for i in _minimum_version])
+    ))
+
+version      = '1.1.0'
 primary_cmd  = 'bin/gallium'
 shortcut_cmd = 'bin/g{version}'.format(version = sys.version_info.major)
 install_cmds = [primary_cmd]
@@ -21,7 +28,7 @@ setup(
     license      = 'MIT',
     author       = 'Juti Noppornpitak',
     author_email = 'juti_n@yahoo.co.jp',
-    url          = 'https://github.com/shiroyuki/carbon',
+    url          = 'https://github.com/shiroyuki/gallium',
     packages     = [
         'gallium',
         'gallium.cli',

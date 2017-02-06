@@ -4,9 +4,6 @@ import sys
 from imagination.meta.container import Entity, Factorization, Lambda
 from imagination.exception      import UnknownEntityError
 from imagination.loader         import Loader
-# from imagination.entity        import CallbackProxy, ReferenceProxy
-# from imagination.factorization import Factorization
-# from imagination.locator       import Locator
 
 from ..interface import ICommand, alias
 from ..helper    import Reflector
@@ -88,55 +85,3 @@ class EntityList(ICommand, EntityManagementCommand):
                 sid = identifier,
                 cn  = id_to_fqcn_map[identifier]
             ))
-
-        # print('\nMore details with "g3 services.show <Service ID>"\n')
-
-
-# @alias('doc')
-# class EntityShow(ICommand, EntityManagementCommand):
-#     """ Show short description of given entity/service IDs. """
-#     def identifier(self):
-#         return 'services.show'
-#
-#     def define(self, parser):
-#         parser.add_argument('id', help = 'Service ID', nargs = '+')
-#
-#     def execute(self, args):
-#         ids = args.id
-#
-#         if not isinstance(ids, list):
-#             self._show_details(ids)
-#             return
-#
-#         for id in ids:
-#             self._show_details(id)
-#
-#     def _show_details(self, id):
-#         try:
-#             wrapper = self.core.locator.get_wrapper(id)
-#         except UnknownEntityError as e:
-#             message = str(e)
-#             message = message[0].lower() + (message[1:] if len(message) > 1 else '')
-#
-#             print('Cannot retrieve the short documentation as {}'.format(message))
-#
-#             sys.exit(1)
-#
-#         cls = self.get_class(wrapper)
-#
-#         # Title
-#         print('\n+{breaker}+\n| {sid} |\n+{breaker}+'.format(
-#             sid = id,
-#             breaker = '-' * (len(id) + 2)
-#         ))
-#
-#         # Description
-#         documentation = Reflector.short_description(cls)
-#         default_doc   = '(No description available)'
-#
-#         print(documentation or default_doc)
-#
-#         print('\nMore details with "{cmd} {fqcn}"\n'.format(
-#             cmd = 'pydoc{}'.format(sys.version_info.major),
-#             fqcn = Reflector.fqcn(cls)
-#         ))

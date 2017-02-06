@@ -3,6 +3,11 @@ import json
 import os
 import sys
 
+try:
+    import yaml
+except ImportError:
+    pass
+
 from gallium                    import Console, Core
 from gallium.loader.basic       import Loader as BasicLoader
 from gallium.loader.imagination import Loader as ImaginationLoader
@@ -19,7 +24,7 @@ if os.name != 'nt':
     default_user_home_path  = os.path.join(os.getenv('HOME'), '.gallium')
     user_home_path          = os.getenv('GALLIUM_HOME') or default_user_home_path
 
-user_config_file_path   = os.path.join(user_home_path, 'config.json')
+user_config_file_path = os.path.join(user_home_path, 'config.json')
 
 symlinks = {
     global_config_path: '/etc/gallium',
@@ -27,7 +32,12 @@ symlinks = {
 
 
 def __p(path):
-    return os.path.join(base_path, path)
+    intended_path = os.path.join(base_path, path)
+
+    if not os.path.exists(intended_path):
+        raise IOError('{} not exists'.format(intended_path))
+
+    return intended_path
 
 
 def __update_config(base_config, updating_config):
@@ -99,10 +109,21 @@ def load_config():
     if base_path not in sys.path:
         sys.path.insert(0, base_path)
 
-    # Load configuration files.
-    local_config_path = os.getenv('GALLIUM_CONF') \
-        or os.getenv('GA_CONF') \
-        or __p('cli.json')
+    override_config_path = os.getenv('GALLIUM_CONF') or os.getenv('GA_CONF')
+
+    if override_config_path:
+        local_config_path = override_config_path
+
+        sys.stderr.write('Reading a configuration from {}'.format(local_config_path))
+    else:
+        # Load configuration files from the default locations
+        try:
+            local_config_path = __p('cli.json')
+        except IOError:
+            try:
+                local_config_path = __p('cli.yml')
+            except IOError:
+                raise IOError('Cannot find either cli.json or cli.yml')
 
     seeking_config_files = [local_config_path, user_config_file_path, global_config_file_path]
     readable_file_paths  = __can_read_any_of(*seeking_config_files)
@@ -114,7 +135,13 @@ def load_config():
 
     for readable_file_path in readable_file_paths:
         with codecs.open(readable_file_path, 'r') as f:
-            file_cli_config = json.load(f)
+            if readable_file_path[-4:] == '.yml':
+                if 'yaml' not in sys.modules:
+                    raise ImportError('You must install pyyaml before using a YAML configuration.')
+
+                file_cli_config = yaml.load(f.read())
+            else:
+                file_cli_config = json.load(f)
 
             __update_config(
                 cli_config,
@@ -131,10 +158,14 @@ def load_config():
     }
 
 
-def main(config_content = None):
+def main(config_content = None, default_commands = None):
     console_name = os.path.basename(sys.argv[0]) or __package__
 
-    config = {}
+    config = {
+        'content': {
+            'imports': []
+        }
+    }
 
     if config_content:
         config['content'] = config_content
@@ -142,22 +173,30 @@ def main(config_content = None):
         try:
             config.update(load_config())
         except IOError as e:
-            print(e)
-            sys.exit(1)
+            sys.stderr.write('WARNING: {}\n'.format(e))
 
     # Initialize the Gallium core.
     framework_core = Core()
 
-    basic_loader       = BasicLoader()
-    # imagination_loader = ImaginationLoader(framework_core)
+    basic_loader = BasicLoader()
 
     enabled_loaders = [
         basic_loader,
-        # imagination_loader
     ]
 
     # Add the utility for Imagination framework.
-    config['content']['imports'].insert(0, 'gallium.cli.imagination')
+    if not default_commands:
+        default_commands = [
+            'gallium.cli.imagination',
+            'gallium.cli.setup',
+        ]
+
+    try:
+        for default_command in default_commands:
+            config['content']['imports'].insert(0, default_command)
+    except KeyError:
+        sys.stderr.write('ERROR: Malform configuration\n')
+        sys.exit(1)
 
     # Create a console interface.
     console = Console(
