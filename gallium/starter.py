@@ -104,11 +104,7 @@ def __can_read_any_of(*paths):
     return readable_paths
 
 
-def load_config():
-    # Ensure that the base path is at the top of the Python paths.
-    if base_path not in sys.path:
-        sys.path.insert(0, base_path)
-
+def __get_default_readable_paths():
     override_config_path = os.getenv('GALLIUM_CONF') or os.getenv('GA_CONF')
 
     if override_config_path:
@@ -126,7 +122,14 @@ def load_config():
                 raise IOError('Cannot find either cli.json or cli.yml')
 
     seeking_config_files = [local_config_path, user_config_file_path, global_config_file_path]
-    readable_file_paths  = __can_read_any_of(*seeking_config_files)
+
+    return __can_read_any_of(*seeking_config_files)
+
+
+def load_config(readable_file_paths):
+    # Ensure that the base path is at the top of the Python paths.
+    if base_path not in sys.path:
+        sys.path.insert(0, base_path)
 
     cli_config = {}
 
@@ -158,7 +161,8 @@ def load_config():
     }
 
 
-def main(config_content = None, default_commands = None):
+def main(config_content = None, readable_file_paths = None,
+         default_extensions = None, default_commands = None):
     console_name = os.path.basename(sys.argv[0]) or __package__
 
     config = {
@@ -171,7 +175,9 @@ def main(config_content = None, default_commands = None):
         config['content'] = config_content
     else:
         try:
-            config.update(load_config())
+            config_from_files = load_config(readable_file_paths or __get_default_readable_paths())
+
+            config.update(config_from_files)
         except IOError as e:
             sys.stderr.write('WARNING: {}\n'.format(e))
 
@@ -191,11 +197,21 @@ def main(config_content = None, default_commands = None):
             'gallium.cli.setup',
         ]
 
+    if not default_extensions:
+        default_extensions = []
+
     try:
         for default_command in default_commands:
             config['content']['imports'].insert(0, default_command)
     except KeyError:
-        sys.stderr.write('ERROR: Malform configuration\n')
+        sys.stderr.write('ERROR: Failed to register default commands\n')
+        sys.exit(1)
+
+    try:
+        for default_extension in default_extensions:
+            config['content']['extensions'].insert(0, default_extension)
+    except KeyError:
+        sys.stderr.write('ERROR: Failed to register default extensions\n')
         sys.exit(1)
 
     # Create a console interface.
