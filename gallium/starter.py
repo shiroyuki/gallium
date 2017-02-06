@@ -104,8 +104,9 @@ def __can_read_any_of(*paths):
     return readable_paths
 
 
-def __get_default_readable_paths():
+def __get_default_readable_paths(default_file_name = None):
     override_config_path = os.getenv('GALLIUM_CONF') or os.getenv('GA_CONF')
+    default_file_name    = default_file_name or 'cli'
 
     if override_config_path:
         local_config_path = override_config_path
@@ -114,12 +115,12 @@ def __get_default_readable_paths():
     else:
         # Load configuration files from the default locations
         try:
-            local_config_path = __p('cli.json')
+            local_config_path = __p('{default_file_name}.json'.format(default_file_name = default_file_name))
         except IOError:
             try:
-                local_config_path = __p('cli.yml')
+                local_config_path = __p('{default_file_name}.yml'.format(default_file_name = default_file_name))
             except IOError:
-                raise IOError('Cannot find either cli.json or cli.yml')
+                raise IOError('Cannot find either {default_file_name}.json or {default_file_name}.yml'.format(default_file_name = default_file_name))
 
     seeking_config_files = [local_config_path, user_config_file_path, global_config_file_path]
 
@@ -161,7 +162,7 @@ def load_config(readable_file_paths):
     }
 
 
-def main(config_content = None, readable_file_paths = None,
+def main(config_content = None, readable_file_paths = None, default_file_name = None,
          default_extensions = None, default_commands = None):
     console_name = os.path.basename(sys.argv[0]) or __package__
 
@@ -175,7 +176,9 @@ def main(config_content = None, readable_file_paths = None,
         config['content'] = config_content
     else:
         try:
-            config_from_files = load_config(readable_file_paths or __get_default_readable_paths())
+            config_from_files = load_config(
+                readable_file_paths or __get_default_readable_paths(default_file_name)
+            )
 
             config.update(config_from_files)
         except IOError as e:
