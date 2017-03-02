@@ -157,8 +157,8 @@ def load_config(readable_file_paths):
         sys.path.extend(cli_config['paths'])
 
     return {
-        'content':    cli_config,
-        'local_path': local_config_path,
+        'content': cli_config,
+        'paths':   readable_file_paths,
     }
 
 
