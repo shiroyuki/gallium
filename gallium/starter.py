@@ -127,15 +127,17 @@ def __get_default_readable_paths(default_file_name = None):
     return __can_read_any_of(*seeking_config_files)
 
 
-def load_config(readable_file_paths):
+def load_config(readable_file_paths = None, default_file_name = None):
     # Ensure that the base path is at the top of the Python paths.
     if base_path not in sys.path:
         sys.path.insert(0, base_path)
 
     cli_config = {}
 
+    readable_file_paths = readable_file_paths or __get_default_readable_paths(default_file_name)
+
     if not readable_file_paths:
-        raise IOError('{} neither existed nor readable'.format(seeking_config_files[0]))
+        raise IOError('The configuration files are not defined.')
 
     for readable_file_path in readable_file_paths:
         with codecs.open(readable_file_path, 'r') as f:
@@ -157,8 +159,8 @@ def load_config(readable_file_paths):
         sys.path.extend(cli_config['paths'])
 
     return {
-        'content':    cli_config,
-        'local_path': local_config_path,
+        'content': cli_config,
+        'paths':   readable_file_paths,
     }
 
 
@@ -177,9 +179,7 @@ def main(config_content = None, readable_file_paths = None, default_file_name = 
         config['content'] = config_content
     else:
         try:
-            config_from_files = load_config(
-                readable_file_paths or __get_default_readable_paths(default_file_name)
-            )
+            config_from_files = load_config(readable_file_paths, default_file_name)
 
             config.update(config_from_files)
         except IOError as e:
