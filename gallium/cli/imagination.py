@@ -69,6 +69,11 @@ class EntityList(ICommand, EntityManagementCommand):
 
             id_to_fqcn_map[identifier] = fqcn
 
+        if not identifiers:
+            print('(No service registered)')
+
+            return
+
         max_id_length = max([len(i) for i in identifiers])
         max_cn_length = max([len(id_to_fqcn_map[i]) for i in identifiers])
 
