@@ -6,6 +6,8 @@ from ..interface import IExtension
 
 class InvalidExtensionError(ValueError): pass
 
+class UnmatchedSettingTypeError(TypeError): pass
+
 def activate(core, config):
     """ Activate/load the extensions
 
@@ -35,11 +37,34 @@ def activate(core, config):
         if config_key is None:
             # NOTE the extension will run without configuration.
             extension.initialize(core)
-        else:
-            # NOTE the extension will run with configuration. Please note
-            #      that the default settings may be used.
-            ext_config = config[config_key] \
-                if config_key in config \
-                else extension.default_settings()
 
-            extension.initialize(core, ext_config)
+            continue
+
+        # NOTE the extension will run with configuration. Please note
+        #      that the default settings may be used.
+        default_settings = extension.default_settings()
+
+        ext_config = config[config_key] \
+            if config_key in config \
+            else None
+
+        setting_type = type(default_settings)
+
+        if ext_config and not isinstance(ext_config, setting_type):
+            raise UnmatchedSettingTypeError('{}.{} expected the settings to be of type {}, given {} instead.'.format(
+                extension_class.__module__,
+                extension_class.__name__,
+                setting_type.__name__,
+                ext_config
+            ))
+        elif not ext_config:
+            ext_config = default_settings # Set to the default settings
+
+        if isinstance(default_settings, dict):
+            for key, value in default_settings.items():
+                if key in ext_config:
+                    continue
+
+                ext_config[key] = value # Set to the default value if not available
+
+        extension.initialize(core, ext_config)
