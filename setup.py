@@ -8,7 +8,7 @@ if sys.version_info < _minimum_version:
         '.'.join([str(i) for i in _minimum_version])
     ))
 
-version      = '1.1.6'
+version      = '1.1.7'
 primary_cmd  = 'bin/gallium'
 shortcut_cmd = 'bin/g{version}'.format(version = sys.version_info.major)
 install_cmds = [primary_cmd]
@@ -16,10 +16,7 @@ install_cmds = [primary_cmd]
 if os.path.exists(shortcut_cmd):
     install_cmds.append(shortcut_cmd)
 
-try:
-    from setuptools import setup
-except:
-    from distutils.core import setup
+from distutils.core import setup
 
 setup(
     name         = 'gallium',
@@ -49,5 +46,6 @@ setup(
         'kotoba',
         'imagination',
         'pyyaml',
-    ]
+    ],
+    python_requires = '>=3.4',
 )

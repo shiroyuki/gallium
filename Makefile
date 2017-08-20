@@ -13,8 +13,11 @@ install:
 	@$(PIP) install -IU --force-reinstall dist/*
 
 # Not using bdist_wheel due to permission issue.
-release:
-	@$(PY) setup.py sdist upload
+clean-dist:
+	@rm dist/*
+
+release: clean-dist package
+	@twine upload dist/*
 
 # Build the test image.
 docker-image:
