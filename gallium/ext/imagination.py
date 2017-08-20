@@ -1,5 +1,4 @@
 """ Integration Extension for Gallium Core and Imagination Framework """
-
 import os
 
 from ..interface import IExtension

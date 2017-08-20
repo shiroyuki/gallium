@@ -5,13 +5,18 @@ from imagination.meta.container import Entity, Factorization, Lambda
 from imagination.exception      import UnknownEntityError
 from imagination.loader         import Loader
 
+try:
+    standalone_container_available = True
+    from imagination.standalone import container as standalone_container
+except ImportError:
+    standalone_container_available = False
+
 from ..interface import ICommand, alias
 from ..helper    import Reflector
 
 
 class EntityManagementCommand(object):
-    def get_id_to_wrapper_map(self):
-        locator     = self.core.container
+    def get_id_to_wrapper_map(self, locator):
         identifiers = locator.all_ids()
         wrapper_map = {}
 
@@ -51,7 +56,22 @@ class EntityList(ICommand, EntityManagementCommand):
         pass
 
     def execute(self, args):
-        wrapper_map = self.get_id_to_wrapper_map()
+        print('⎡⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎤')
+        print('⎢ With the default container            ⎥')
+        print('⎣⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎦')
+
+        self._show(self.core.container)
+
+        if standalone_container_available:
+            print()
+            print('⎡⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎤')
+            print('⎢ With imagination.standalone.container ⎥')
+            print('⎣⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎦')
+
+            self._show(standalone_container)
+
+    def _show(self, locator):
+        wrapper_map = self.get_id_to_wrapper_map(locator)
         identifiers = list(wrapper_map.keys())
 
         id_to_fqcn_map = {}
@@ -70,6 +90,7 @@ class EntityList(ICommand, EntityManagementCommand):
             id_to_fqcn_map[identifier] = fqcn
 
         if not identifiers:
+            print()
             print('(No service registered)')
 
             return
