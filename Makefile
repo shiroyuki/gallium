@@ -5,8 +5,7 @@ LXC_IMAGE_TAG=shiroyuki/gallium
 LXC_RUN_OPTS=
 LXC_RUN_ARGS=
 
-package:
-	@rm -v dist/*
+package: clean-dist
 	@$(PY) setup.py sdist
 
 install:
@@ -14,7 +13,7 @@ install:
 
 # Not using bdist_wheel due to permission issue.
 clean-dist:
-	@rm dist/*
+	@rm dist/* 2> /dev/null || echo '(/dist is clean...)'
 
 release: clean-dist package
 	@twine upload dist/*
