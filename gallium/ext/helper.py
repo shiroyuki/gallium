@@ -2,7 +2,7 @@ import json
 
 from imagination.loader import Loader
 
-from ..interface import IExtension
+from ..interface import IExtension, fetch_extension_dependencies
 
 class InvalidExtensionError(ValueError): pass
 
@@ -22,49 +22,61 @@ def activate(core, config):
     if 'gallium.ext.imagination.Extension' not in extension_fqcns:
         extension_fqcns.insert(0, 'gallium.ext.imagination.Extension')
 
+    activated_classes = set()
+
     for extension_fqcn in extension_fqcns:
-        extension_class = Loader(extension_fqcn).package
+        __activate_one_extension(core, config, Loader(extension_fqcn).package, activated_classes)
 
-        if not issubclass(extension_class, IExtension):
-            raise ValueError('{} is not a subclass of {}.'.format(
-                extension_class.__name__,
-                IExtension.__name__
-            ))
+def __activate_one_extension(core, config : dict, extension_class : type, activated_classes : set):
+    if not issubclass(extension_class, IExtension):
+        raise ValueError('{} is not a subclass of {}.'.format(
+            extension_class.__name__,
+            IExtension.__name__
+        ))
 
-        extension  = extension_class()
-        config_key = extension.config_key()
+    if extension_class in activated_classes:
+        return
 
-        if config_key is None:
-            # NOTE the extension will run without configuration.
-            extension.initialize(core)
+    # Activate the depending extensions first.
+    for depending_class in fetch_extension_dependencies(extension_class):
+        __activate_one_extension(core, config, depending_class, activated_classes)
 
-            continue
+    activated_classes.add(extension_class)
 
-        # NOTE the extension will run with configuration. Please note
-        #      that the default settings may be used.
-        default_settings = extension.default_settings()
+    extension  = extension_class()
+    config_key = extension.config_key()
 
-        ext_config = config[config_key] \
-            if config_key in config \
-            else None
+    if config_key is None:
+        # NOTE the extension will run without configuration.
+        extension.initialize(core)
 
-        setting_type = type(default_settings)
+        return
 
-        if ext_config and not isinstance(ext_config, setting_type):
-            raise UnmatchedSettingTypeError('{}.{} expected the settings to be of type {}, given {} instead.'.format(
-                extension_class.__module__,
-                extension_class.__name__,
-                setting_type.__name__,
-                ext_config
-            ))
-        elif not ext_config:
-            ext_config = default_settings # Set to the default settings
+    # NOTE the extension will run with configuration. Please note
+    #      that the default settings may be used.
+    default_settings = extension.default_settings()
 
-        if isinstance(default_settings, dict):
-            for key, value in default_settings.items():
-                if key in ext_config:
-                    continue
+    ext_config = config[config_key] \
+        if config_key in config \
+        else None
 
-                ext_config[key] = value # Set to the default value if not available
+    setting_type = type(default_settings)
 
-        extension.initialize(core, ext_config)
+    if ext_config and not isinstance(ext_config, setting_type):
+        raise UnmatchedSettingTypeError('{}.{} expected the settings to be of type {}, given {} instead.'.format(
+            extension_class.__module__,
+            extension_class.__name__,
+            setting_type.__name__,
+            ext_config
+        ))
+    elif not ext_config:
+        ext_config = default_settings # Set to the default settings
+
+    if isinstance(default_settings, dict):
+        for key, value in default_settings.items():
+            if key in ext_config:
+                continue
+
+            ext_config[key] = value # Set to the default value if not available
+
+    extension.initialize(core, ext_config)

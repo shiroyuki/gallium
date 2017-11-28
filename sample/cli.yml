@@ -1,0 +1,13 @@
+paths:
+    - "../"
+
+services:
+    - imagination.xml
+
+imports:
+    - gallium.sample.ArgsInspector
+    - app.allinone_commands
+    - app.Default
+
+extensions:
+    - app.extension.B

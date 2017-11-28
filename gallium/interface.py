@@ -11,6 +11,7 @@ import sys
 import time
 
 alias_property_name = '__gallium_cli_aliases__'
+extension_dependency_list_property_name = '__depending_extension_classes__'
 
 
 class EmergencyExit(RuntimeError):
@@ -175,6 +176,7 @@ class IExtension(object):
         raise NotImplementedError()
 
 def alias(*names):
+    """ Add the alias to the command """
     def make_alias(cls):
         if not hasattr(cls, alias_property_name):
             setattr(cls, alias_property_name, set())
@@ -185,3 +187,22 @@ def alias(*names):
         return cls
 
     return make_alias
+
+def depend_on(*extension_classes):
+    """ Add the extension dependencies to an extension """
+    def add_depending_extension(cls):
+        if not hasattr(cls, extension_dependency_list_property_name):
+            setattr(cls, extension_dependency_list_property_name, set())
+
+        for extension_class in extension_classes:
+            getattr(cls, extension_dependency_list_property_name).add(extension_class)
+
+        return cls
+
+    return add_depending_extension
+
+def fetch_extension_dependencies(extension_class : type) -> set:
+    if not hasattr(extension_class, extension_dependency_list_property_name):
+        return set()
+
+    return getattr(extension_class, extension_dependency_list_property_name)
