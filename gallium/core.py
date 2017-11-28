@@ -17,8 +17,8 @@ class Core(object):
 
         This relies on Imagination Framework.
     """
-    def __init__(self, locator=None):
-        self.assembler = Assembler()
+    def __init__(self, assembler = None):
+        self.assembler = assembler or Assembler()
 
     @property
     def _core(self):

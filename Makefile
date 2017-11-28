@@ -26,6 +26,9 @@ docker-image:
 docker-run: docker-image
 	@docker run -it --rm $(LXC_RUN_OPTS) $(LXC_IMAGE_TAG) $(LXC_RUN_ARGS)
 
+test-unit:
+	python3 -m unittest discover tests
+
 # NOTE use for testing in isolation.
 test-functional-isolation:
 	@echo "[BEGIN] functional test in isolation"
