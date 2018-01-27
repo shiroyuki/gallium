@@ -16,12 +16,12 @@ class Init(ICommand):
         return 'init'
 
     def define(self, parser):
-        parser.add_argument('--format', '-f', help = 'Configuration file format (e.g., yaml, json)', default = 'json', required = False)
+        parser.add_argument('--format', '-f', help = 'Configuration file format, e.g., yaml (or yml), json', default = 'yml', required = False)
         parser.add_argument('--output', '-o', help = 'The path to write the config file (default to the current directory).', required = False)
 
     def execute(self, args):
-        print('This is the setup wizard for a new project.')
-        print('NOTE: blank response is to proceed to the next step.\n')
+        print('>>> This is the setup wizard for a new project.')
+        print('>>> NOTE: blank response is to proceed to the next step.\n')
 
         file_format = (args.format).lower()
 
@@ -41,22 +41,24 @@ class Init(ICommand):
 
             output_data = yaml.dump(config_data, default_flow_style = False)
         elif file_format == 'json':
-            output_data = json.dump(config_data, indent = 4, sort_keys = True)
+            output_data = json.dumps(config_data, indent = 4, sort_keys = True)
         else:
             self.alert('Unsupported file format')
             self.bail_out()
 
-        print('+------------------------------+')
-        print('| Auto-generated Configuration |')
-        print('+------------------------------+')
+        print('>>> +------------------------------+')
+        print('>>> | Auto-generated Configuration |')
+        print('>>> +------------------------------+')
         print(output_data)
 
-        self.ask('\nWrite to', default = output_path)
+        actual_output_path = self.ask('\nWrite to', default = output_path)
 
-        with codecs.open(output_path, 'w') as f:
-            f.write(output_data)
+        print('>>> Writing to {}'.format(actual_output_path))
 
-        print('Now, you are ready to go.')
+        with codecs.open(actual_output_path, 'w') as f:
+            f.write(actual_output_path)
+
+        print('>>> Now, you are ready to go.')
 
     def _retrieve_list(self, message):
         print('{}\n{}'.format(message, '=' * len(message)))

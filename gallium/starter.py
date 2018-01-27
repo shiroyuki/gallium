@@ -185,6 +185,8 @@ def main(config_content = None, readable_file_paths = None, default_file_name = 
         except IOError as e:
             sys.stderr.write('WARNING: {}\n'.format(e))
 
+    current_config = config['content']
+
     # Initialize the Gallium core.
     framework_core = Core()
 
@@ -206,14 +208,14 @@ def main(config_content = None, readable_file_paths = None, default_file_name = 
 
     try:
         for default_command in default_commands:
-            config['content']['imports'].insert(0, default_command)
+            current_config['imports'].insert(0, default_command)
     except KeyError:
         sys.stderr.write('ERROR: Failed to register default commands\n')
         sys.exit(1)
 
     try:
         for default_extension in default_extensions:
-            config['content']['extensions'].insert(0, default_extension)
+            current_config['extensions'].insert(0, default_extension)
     except KeyError:
         sys.stderr.write('ERROR: Failed to register default extensions\n')
         sys.exit(1)
@@ -222,7 +224,7 @@ def main(config_content = None, readable_file_paths = None, default_file_name = 
     console = Console(
         name    = console_name,
         core    = framework_core,
-        config  = config['content'],
+        config  = current_config,
         loaders = enabled_loaders
     )
 

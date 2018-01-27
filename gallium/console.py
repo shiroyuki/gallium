@@ -16,6 +16,8 @@ from .helper     import Reflector
 from .interface  import ICommand, IExtension, alias_property_name, \
                         EmptyResponse, EmergencyExit
 
+from .model.internal import ContainerMode, Internal
+
 class AliasNotRegisteredError(RuntimeError): pass
 
 class Console(object):
@@ -25,7 +27,7 @@ class Console(object):
     """
     CONST_CONF_KEY_CMD_SETTINGS = 'settings'
 
-    def __init__(self, name, core = None, config={}, config_path=None, loaders=[]):
+    def __init__(self, name, core = None, config = {}, config_path = None, loaders = []):
         self.name   = name
         self.core   = core or Core()
         self.config = config
@@ -54,6 +56,12 @@ class Console(object):
         except KeyError as e:
             pass # not settings overridden
 
+        # Set the primary service container (Imagination Core).
+        internal_config = Internal(**(self.config.get('internal') or {}))
+
+        self.core.configure(internal_config)
+
+        # Load the configuration with the config loaders.
         loading_targets = []
 
         for loader in self.loaders:

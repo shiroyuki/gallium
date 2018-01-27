@@ -56,19 +56,26 @@ class EntityList(ICommand, EntityManagementCommand):
         pass
 
     def execute(self, args):
-        print('⎡⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎤')
-        print('⎢ With the default container            ⎥')
-        print('⎣⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎦')
+        print('----------------- BEGIN -----------------')
+        print()
 
-        self._show(self.core.container)
+        if not self.core.container.in_proxy_mode():
+            print('⎡⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎤')
+            print('⎢ With the built-in container           ⎥')
+            print('⎣⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎦')
 
-        if standalone_container_available:
+            self._show(self.core.container)
+
+        if not standalone_container.in_proxy_mode() and standalone_container_available:
             print()
             print('⎡⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎤')
             print('⎢ With imagination.standalone.container ⎥')
             print('⎣⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎦')
 
             self._show(standalone_container)
+
+        print()
+        print('------------------ END ------------------')
 
     def _show(self, locator):
         wrapper_map = self.get_id_to_wrapper_map(locator)
@@ -91,7 +98,7 @@ class EntityList(ICommand, EntityManagementCommand):
 
         if not identifiers:
             print()
-            print('(No service registered)')
+            print('  ***** No service registered *****')
 
             return
 

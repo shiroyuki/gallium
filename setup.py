@@ -1,14 +1,14 @@
 import os
 import sys
 
-_minimum_version = (3, 4)
+_minimum_version = (3, 5)
 
 if sys.version_info < _minimum_version:
     raise RuntimeError('Required Python {}'.format(
         '.'.join([str(i) for i in _minimum_version])
     ))
 
-version      = '1.3.0'
+version      = '1.4.0'
 primary_cmd  = 'bin/gallium'
 shortcut_cmd = 'bin/g{version}'.format(version = sys.version_info.major)
 install_cmds = [primary_cmd]
@@ -31,6 +31,7 @@ setup(
         'gallium.cli',
         'gallium.ext',
         'gallium.loader',
+        'gallium.model',
     ],
     classifiers = [
         'Development Status :: 5 - Production/Stable',
@@ -47,5 +48,5 @@ setup(
         'imagination',
         'pyyaml',
     ],
-    python_requires = '>=3.4',
+    python_requires = '>=3.5',
 )
