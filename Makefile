@@ -55,6 +55,7 @@ test-functional: install-local
 	@($(G3_CLI) --process-debug args.inspect || (echo "***** Exit with error code $$? *****"));
 	@echo "-------------------------------------------------------------------------"
 	@make uninstall-local
+	@echo "***** If you see this message, everything is fine. *****"
 
 install-local:
 	@$(PIP) install -qI --user .

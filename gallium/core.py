@@ -21,7 +21,7 @@ class Core(object):
         This relies on Imagination Framework.
     """
     def __init__(self, assembler = None):
-        self.assembler = assembler or Assembler()
+        self.assembler = assembler or Assembler(standalone_container)
 
     @property
     def _core(self):
@@ -99,12 +99,3 @@ class Core(object):
                 internal_config.container,
                 ContainerMode.__doc__,
             )
-
-        if internal_config.container == ContainerMode.SPLITTER:
-            # NOTE This is the default behaviour up until version 1.4.
-            pass # NOOP -- to ensure that this case is covered but no executions.
-        elif internal_config.container == ContainerMode.BUILTIN:
-            # FIXME This will be the default behaviour from version 1.5 onward.
-            standalone_container.act_as(self.container)
-        elif internal_config.container == ContainerMode.STANDALONE:
-            self.container.act_as(standalone_container)
