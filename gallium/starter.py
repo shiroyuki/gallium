@@ -145,7 +145,7 @@ def load_config(readable_file_paths = None, default_file_name = None):
                 if 'yaml' not in sys.modules:
                     raise ImportError('You must install pyyaml before using a YAML configuration.')
 
-                file_cli_config = yaml.load(f.read())
+                file_cli_config = yaml.load(f.read(), Loader=yaml.SafeLoader)
             else:
                 file_cli_config = json.load(f)
 
