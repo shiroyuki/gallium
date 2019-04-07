@@ -105,6 +105,11 @@ class ICommand(object):
 
             kind(response) if kind and callable(kind) else response
 
+            if response is None:
+                error = 'You need to provide some input or press Control C to abort.'
+
+                continue
+
             if choices and response.lower() not in choices:
                 error = 'Please respond with "{}".'.format('" or "'.join(choices))
 
