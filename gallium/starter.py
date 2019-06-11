@@ -165,8 +165,8 @@ def load_config(readable_file_paths = None, default_file_name = None):
 
 
 def main(config_content = None, readable_file_paths = None, default_file_name = None,
-         default_extensions = None, default_commands = None):
-    console_name = os.path.basename(sys.argv[0]) or __package__
+         default_extensions = None, default_commands = None, console_name = None):
+    console_name = console_name or os.path.basename(sys.argv[0]) or __package__
 
     config = {
         'content': {
