@@ -198,7 +198,7 @@ def main(config_content = None, readable_file_paths = None, default_file_name = 
     ]
 
     # Add the utility for Imagination framework.
-    if not default_commands:
+    if not in_isolation and not default_commands:
         default_commands = [
             'gallium.cli.imagination',
             'gallium.cli.setup',

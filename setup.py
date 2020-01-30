@@ -8,7 +8,7 @@ if sys.version_info < _minimum_version:
         '.'.join([str(i) for i in _minimum_version])
     ))
 
-version      = '1.4.4'
+version      = '1.5.0'
 primary_cmd  = 'bin/gallium'
 shortcut_cmd = 'bin/g{version}'.format(version = sys.version_info.major)
 install_cmds = [primary_cmd]
