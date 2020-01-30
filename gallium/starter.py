@@ -165,7 +165,8 @@ def load_config(readable_file_paths = None, default_file_name = None):
 
 
 def main(config_content = None, readable_file_paths = None, default_file_name = None,
-         default_extensions = None, default_commands = None, console_name = None):
+         default_extensions = None, default_commands = None, console_name = None,
+         in_isolation = False):
     console_name = console_name or os.path.basename(sys.argv[0]) or __package__
 
     config = {
@@ -177,7 +178,7 @@ def main(config_content = None, readable_file_paths = None, default_file_name = 
 
     if config_content:
         config['content'] = config_content
-    else:
+    elif not in_isolation:
         try:
             config_from_files = load_config(readable_file_paths, default_file_name)
 

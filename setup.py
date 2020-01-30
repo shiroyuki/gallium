@@ -8,7 +8,7 @@ if sys.version_info < _minimum_version:
         '.'.join([str(i) for i in _minimum_version])
     ))
 
-version      = '1.4.3a2'
+version      = '1.4.4'
 primary_cmd  = 'bin/gallium'
 shortcut_cmd = 'bin/g{version}'.format(version = sys.version_info.major)
 install_cmds = [primary_cmd]
@@ -45,7 +45,7 @@ setup(
     scripts          = install_cmds,
     install_requires = [
         'kotoba',
-        'imagination>=3.0.0a4',
+        'imagination>=3.0.0',
         'pyyaml',
     ],
     python_requires = '>=3.5',
