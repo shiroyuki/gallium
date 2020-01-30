@@ -168,6 +168,7 @@ def main(config_content = None, readable_file_paths = None, default_file_name = 
          default_extensions = None, default_commands = None, console_name = None,
          in_isolation = False):
     console_name = console_name or os.path.basename(sys.argv[0]) or __package__
+    default_commands = default_commands or []
 
     config = {
         'content': {
