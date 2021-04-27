@@ -9,3 +9,7 @@ docs:
 
 docs-server: docs
 	python3 -m http.server -d generated-docs/gallium 8080
+
+release:
+	python3 setup.py sdist
+	twine upload dist/*
