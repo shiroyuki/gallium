@@ -1,3 +1,4 @@
+from distutils.core import setup
 import sys
 
 _minimum_version = (3, 5)
@@ -7,9 +8,10 @@ if sys.version_info < _minimum_version:
         '.'.join([str(i) for i in _minimum_version])
     ))
 
-version = '2.0.0a1'
+version = '2.0.0a2'
 
-from distutils.core import setup
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
 
 setup(
     name='gallium',
@@ -19,6 +21,8 @@ setup(
     author='Juti Noppornpitak',
     author_email='juti_n@yahoo.co.jp',
     url='https://github.com/shiroyuki/gallium',
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     packages=[
         'gallium',
         'gallium.cli',
@@ -26,7 +30,7 @@ setup(
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
-        #'Development Status :: 5 - Production/Stable',
+        # 'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
