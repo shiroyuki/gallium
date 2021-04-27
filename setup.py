@@ -1,3 +1,4 @@
+import os
 from distutils.core import setup
 import sys
 
@@ -8,10 +9,12 @@ if sys.version_info < _minimum_version:
         '.'.join([str(i) for i in _minimum_version])
     ))
 
-version = '2.0.0a2'
+version = '2.0.0a3'
 
-with open("README.md", "r", encoding="utf-8") as fh:
-    long_description = fh.read()
+long_description = ''
+if os.path.exists('readme.md'):
+    with open('readme.md', "r", encoding="utf-8") as fh:
+        long_description = fh.read()
 
 setup(
     name='gallium',
