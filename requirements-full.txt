@@ -1,0 +1,9 @@
+imagination~=3.3
+kotoba~=3.0
+pyyaml~=5.4.1
+flask~=1.1.2
+cryptography~=3.4.7
+requests
+pyjwt~=2.0
+pydantic~=1.8
+pdoc

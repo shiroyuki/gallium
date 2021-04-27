@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+SCRIPT_PATH=$(dirname $0)
+BASE_PATH=${SCRIPT_PATH}/..
+
+source ${BASE_PATH}/.venv/bin/activate
+python3 -m $@ # For normal operation
+# python3 -m $@ || (echo "Failed on the first try. Retrying..." && pip3 install -r requirements.txt && python3 -m $@) # For dev only

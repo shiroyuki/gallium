@@ -1,3 +1,3 @@
-kotoba
-imagination>=2,<3
-pyyaml>=5.1
+imagination~=3.3
+kotoba~=3.0
+pyyaml~=5.4.1
