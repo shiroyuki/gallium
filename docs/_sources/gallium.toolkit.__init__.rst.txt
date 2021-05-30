@@ -1,0 +1,5 @@
+gallium.toolkit.__init__
+========================
+
+.. automodule:: gallium.toolkit.__init__
+   :members:

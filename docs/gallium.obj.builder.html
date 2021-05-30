@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>gallium.obj.builder &#8212; Gallium 2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="gallium.obj.decorator" href="gallium.obj.decorator.html" />
+    <link rel="prev" title="gallium.cli.form" href="gallium.cli.form.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-gallium.obj.builder">
+<span id="gallium-obj-builder"></span><h1>gallium.obj.builder<a class="headerlink" href="#module-gallium.obj.builder" title="Permalink to this headline">¶</a></h1>
+<p>This module provides an object builder inspired by Lombok (Java).</p>
+<section id="quick-start">
+<h2>Quick start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
+<p>Here is a quick example on how to use it.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">User</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">age</span><span class="p">:</span> <span class="nb">int</span>
+
+<span class="n">ObjectBuilder</span><span class="p">(</span><span class="n">User</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">&quot;Foo&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">age</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is tested with Python’s built-in <code class="docutils literal notranslate"><span class="pre">dataclass</span></code> and Pylandic’s <code class="docutils literal notranslate"><span class="pre">BaseModel</span></code>.</p>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="gallium.obj.builder.Attribute">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gallium.obj.builder.</span></span><span class="sig-name descname"><span class="pre">Attribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#gallium.obj.builder.AttributeSpec" title="gallium.obj.builder.AttributeSpec"><span class="pre">gallium.obj.builder.AttributeSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initialized</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gallium.obj.builder.Attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class Attribute</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gallium.obj.builder.AttributeSpec">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gallium.obj.builder.</span></span><span class="sig-name descname"><span class="pre">AttributeSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">types</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Type</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optional</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gallium.obj.builder.AttributeSpec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class Attribute Specification</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gallium.obj.builder.IncompatibleBuildableClassError">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">gallium.obj.builder.</span></span><span class="sig-name descname"><span class="pre">IncompatibleBuildableClassError</span></span><a class="headerlink" href="#gallium.obj.builder.IncompatibleBuildableClassError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class annotations does not exist</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gallium.obj.builder.ObjectBuilder">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gallium.obj.builder.</span></span><span class="sig-name descname"><span class="pre">ObjectBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gallium.obj.builder.ObjectBuilder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Object Builder</p>
+<p>Inspired by the <code class="docutils literal notranslate"><span class="pre">lombok.builder</span></code> annotation. (Java)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gallium.obj.builder.ObjectBuilder.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">define_all_attributes</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gallium.obj.builder.ObjectBuilder.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build an instance of the given class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>define_all_attributes</strong> (<em>bool</em>) – Flag to whether to fill in all attributes, including the ones which are
+not covered by the constructor.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gallium.obj.builder.RequiredAttributeError">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">gallium.obj.builder.</span></span><span class="sig-name descname"><span class="pre">RequiredAttributeError</span></span><a class="headerlink" href="#gallium.obj.builder.RequiredAttributeError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attribute in question is not defined before building the object</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Gallium</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gallium.cli.core.html">gallium.cli.core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallium.cli.form.html">gallium.cli.form</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">gallium.obj.builder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallium.obj.decorator.html">gallium.obj.decorator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallium.obj.encoder.html">gallium.obj.encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallium.obj.test_builder.html">gallium.obj.test_builder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallium.obj.utils.html">gallium.obj.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallium.toolkit.docs.html">gallium.toolkit.docs</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="gallium.cli.form.html" title="previous chapter">gallium.cli.form</a></li>
+      <li>Next: <a href="gallium.obj.decorator.html" title="next chapter">gallium.obj.decorator</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Juti Noppornpitak.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/gallium.obj.builder.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
