@@ -9,7 +9,7 @@ if sys.version_info < _minimum_version:
         '.'.join([str(i) for i in _minimum_version])
     ))
 
-version = '2.0.0a3'
+version = '2.0.0a4'
 
 long_description = ''
 if os.path.exists('readme.md'):

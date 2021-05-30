@@ -1,4 +1,4 @@
-.PHONY: test-all test-one docs docs-server release
+.PHONY: test-all test-one docs-setup docs release
 
 test-all:
 	make test-one TEST_DIR=obj
@@ -6,12 +6,12 @@ test-all:
 test-one:
 	./scripts/wrapper unittest discover -f -s gallium/$(TEST_DIR)
 
-docs:
-	source .venv/bin/activate && pip3 install -q pdoc3 && pdoc --force --html -o generated-docs gallium
-	cp -rv generated-docs/gallium/* docs
+docs-setup:
+	python -m venv .venv \
+		&& bash -c "source .venv/bin/activate && pip3 install -r requirements-full.txt"
 
-docs-server: docs
-	python3 -m http.server -d docs 8080
+docs:
+	bash -c "source .venv/bin/activate && python -m gallium.toolkit.docs build --full-build docs-src/source docs gallium"
 
 release:
 	python3 setup.py sdist

@@ -1,4 +1,4 @@
-from typing import Type, Tuple, Any
+from typing import Type, Tuple
 
 NONE_TYPE = type(None)
 

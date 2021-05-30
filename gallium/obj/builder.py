@@ -1,5 +1,26 @@
+"""
+This module provides an object builder inspired by Lombok (Java).
+
+Quick start
+###########
+
+Here is a quick example on how to use it.
+
+.. code-block:: python
+
+    @dataclass
+    class User:
+        name: str
+        age: int
+
+    ObjectBuilder(User).name("Foo").age(123).build()
+
+.. note:: This is tested with Python's built-in ``dataclass`` and Pylandic's ``BaseModel``.
+
+"""
+
 import inspect
-from dataclasses import dataclass, is_dataclass
+from dataclasses import dataclass
 from typing import Type, Any, Dict, Tuple, List
 
 from gallium.obj.utils import is_optional, get_all_types, is_dataclass_class
@@ -7,6 +28,7 @@ from gallium.obj.utils import is_optional, get_all_types, is_dataclass_class
 
 @dataclass(frozen=True)
 class AttributeSpec:
+    """ Class Attribute Specification """
     name: str
     types: Tuple[Type]
     optional: bool
@@ -15,6 +37,7 @@ class AttributeSpec:
 
 @dataclass
 class Attribute:
+    """ Class Attribute """
     spec: AttributeSpec
     value: Any
     initialized: bool
@@ -29,6 +52,10 @@ class Attribute:
 
 
 class ObjectBuilder:
+    """ Object Builder
+
+    Inspired by the ``lombok.builder`` annotation. (Java)
+    """
     __HIDDEN_SCHEMA_PROPERTY_NAME = '__oriole_object_schema__'
 
     def __init__(self, cls: Type):
@@ -114,10 +141,12 @@ class ObjectBuilder:
 
 
 class RequiredAttributeError(RuntimeError):
+    """ Attribute in question is not defined before building the object """
     pass
 
 
 class IncompatibleBuildableClassError(RuntimeError):
+    """ Class annotations does not exist """
     def __init__(self):
         super().__init__('Requires class annotations. '
                          'Check out the doc at https://github.com/shiroyuki/oriole/tree/master/oriole/docs.')
